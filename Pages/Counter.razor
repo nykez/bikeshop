@@ -5,31 +5,54 @@
 <h1>Counter</h1>
 
 
-
-@if (@test == null)
+@if (CustomerList != null)
 {
-    <p> Loading customer details...</p>
+    @foreach (var item in CustomerList)
+    {
+        <p>@item.Firstname @item.Lastname - @item.Address (Balance: $@item.Balancedue)</p>
+    }
 }
 else
 {
-    <p>@test.Firstname @test.Lastname (@test.Address, @test.Zipcode)</p>
+    <p>Loading Customers...</p>
 }
+
+
 
 <button class="btn btn-primary" @onclick="ClickMe"> Random Customer </button>
 
+@if (Customer != null)
+{
+    <p>@Customer.Firstname @Customer.Lastname - @Customer.Address (Balance: $@Customer.Balancedue)</p>
+}
+
 @code {
 
-    Customer test = null;
+    private int pageSize = 10;
+    private int pageNumber = 1;
+    private Customer[] CustomerList;
+
+    private Customer Customer;
+
     private Random random = new Random();
 
     protected override async Task OnInitializedAsync()
     {
-        test = await Http.GetFromJsonAsync<Customer>("/api/customer/2");
+        CustomerList = await Http.GetFromJsonAsync<Customer[]>("api/customer");
     }
 
     public async void ClickMe()
     {
-        test = await Http.GetFromJsonAsync<Customer>("/api/customer/" + random.Next(1, 5000).ToString());
+        var customer = await Http.GetFromJsonAsync<Customer>("api/customer/" + random.Next(1, 5000).ToString());
+        
+        if (customer != null)
+        {
+            Customer = customer;
+        }
+        else
+        {
+            ClickMe();
+        }
     }
     
 }
