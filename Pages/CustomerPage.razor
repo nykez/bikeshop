@@ -1,6 +1,6 @@
 ﻿@page "/customers"
 @using System.Net.Http
-@inject HttpClient Http
+@inject HttpClient HttpLib
 
 <h1>Customer</h1>
 
@@ -19,7 +19,14 @@ else
 
 
 
-<button class="btn btn-primary" @onclick="ClickMe"> Random Customer </button>
+<div class="container-fluid mb-5">
+    <div class="btn-group btn-group-sm mr-5" role="group">
+        <button type="button" class="btn btn-primary" @onclick="PreviousPage"> Previous Page </button>
+        <button type="button" class="btn btn-primary" @onclick="RandomCustomer"> Random Customer </button>
+        <button type="button" class="btn btn-primary" @onclick="NextPage"> Next Page </button>
+    </div>
+</div>
+
 
 @if (Customer != null)
 {
@@ -38,12 +45,23 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        CustomerList = await Http.GetFromJsonAsync<Customer[]>("api/customer");
+        var customerList = await HttpLib.GetFromJsonAsync<Customer[]>($"api/customer?pageNumber={pageNumber}&pageSize={pageSize}");
+        
+        if (customerList.Any())
+        {
+            CustomerList = customerList;
+        }
+            
     }
 
-    public async void ClickMe()
+    private async Task<Customer[]> Paginate()
     {
-        var customer = await Http.GetFromJsonAsync<Customer>("api/customer/" + random.Next(1, 5000).ToString());
+        return await HttpLib.GetFromJsonAsync<Customer[]>($"api/customer?pageNumber={pageNumber}&pageSize={pageSize}");
+    }
+
+    public async void RandomCustomer()
+    {
+        var customer = await HttpLib.GetFromJsonAsync<Customer>("api/customer/" + random.Next(1, 5000).ToString());
         
         if (customer != null)
         {
@@ -51,8 +69,24 @@ else
         }
         else
         {
-            ClickMe();
+            RandomCustomer();
         }
+    }
+
+    public async void PreviousPage()
+    {
+        Console.WriteLine("clicked previous");
+        pageNumber--;
+
+        CustomerList = await Paginate();
+    }
+
+    public async void NextPage()
+    {
+        Console.WriteLine("clicked");
+        pageNumber++;
+
+        CustomerList = await Paginate();
     }
     
 }
