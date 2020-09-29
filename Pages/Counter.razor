@@ -1,0 +1,20 @@
+﻿@page "/counter"
+@using System.Net.Http
+@inject HttpClient Http
+
+<h1>Counter</h1>
+
+<p>@test</p>
+
+<button class="btn btn-primary">Click me</button>
+
+@code {
+
+    string test;
+
+    protected override async Task OnInitializedAsync()
+    {
+        test = await Http.GetStringAsync("/api/customer/2");
+    }
+    
+}
