@@ -6,15 +6,21 @@
 
 <p>@test</p>
 
-<button class="btn btn-primary">Click me</button>
+<button class="btn btn-primary" @onclick="ClickMe"> Random Customer </button>
 
 @code {
 
-    string test;
+    string test = "Loading customer...";
+    private Random random = new Random();
 
     protected override async Task OnInitializedAsync()
     {
         test = await Http.GetStringAsync("/api/customer/2");
+    }
+
+    public async void ClickMe()
+    {
+        test = await Http.GetStringAsync("/api/customer/" + random.Next(1, 5000).ToString());
     }
     
 }
