@@ -4,23 +4,32 @@
 
 <h1>Counter</h1>
 
-<p>@test</p>
+
+
+@if (@test == null)
+{
+    <p> Loading customer details...</p>
+}
+else
+{
+    <p>@test.Firstname @test.Lastname (@test.Address, @test.Zipcode)</p>
+}
 
 <button class="btn btn-primary" @onclick="ClickMe"> Random Customer </button>
 
 @code {
 
-    string test = "Loading customer...";
+    Customer test = null;
     private Random random = new Random();
 
     protected override async Task OnInitializedAsync()
     {
-        test = await Http.GetStringAsync("/api/customer/2");
+        test = await Http.GetFromJsonAsync<Customer>("/api/customer/2");
     }
 
     public async void ClickMe()
     {
-        test = await Http.GetStringAsync("/api/customer/" + random.Next(1, 5000).ToString());
+        test = await Http.GetFromJsonAsync<Customer>("/api/customer/" + random.Next(1, 5000).ToString());
     }
     
 }
