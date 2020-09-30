@@ -7,25 +7,40 @@
 
 @if (CustomerList != null)
 {
-    @foreach (var item in CustomerList)
-    {
-        <p>@item.Firstname @item.Lastname - @item.Address (Balance: $@item.Balancedue)</p>
-    }
-}
-else
-{
-    <p>Loading Customers...</p>
-}
 
-
-
-<div class="container-fluid mb-5">
+    <div class="container-fluid mb-5">
+    <div class="row">
+            @foreach (var item in CustomerList)
+            {
+            <div class="col-lg-2 col-md-3 col-sm-6 mb-1">
+                <div class="card-deck">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">@item.Firstname @item.Lastname</h5>
+                            <p class="card-text">Phone: @item.Phone</p>
+                            <p class="card-text">Email: @item.Address</p>
+                            <p class="card-text">Balance: $@item.Balancedue</p>
+                            <a href="#" class="btn btn-primary">View Customer</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
     <div class="btn-group btn-group-sm mr-5" role="group">
         <button type="button" class="btn btn-primary" @onclick="PreviousPage"> Previous Page </button>
         <button type="button" class="btn btn-primary" @onclick="RandomCustomer"> Random Customer </button>
         <button type="button" class="btn btn-primary" @onclick="NextPage"> Next Page </button>
     </div>
 </div>
+
+
+}
+else
+{
+    <p>Loading Customers...</p>
+}
+
 
 
 @if (Customer != null)
