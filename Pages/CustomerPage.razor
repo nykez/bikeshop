@@ -8,13 +8,14 @@
 @if (CustomerList != null)
 {
 
-    <table class="table">
-        <thead>
+    <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
             <tr>
                 <th>ID</th>
                 <th>Name</th>
                 <th>Address</th>
                 <th>Balance</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -23,14 +24,41 @@
                 <tr>
                     <td>@cust.Customerid</td>
                     <td>@cust.Firstname @cust.Lastname</td>
-                    <td>@cust.Address</td>
+                        @if (@cust.Address == "0")
+                        {
+                            <td>No address record </td>
+                        }
+                        else
+                        {
+                            <td>@cust.Address</td>
+                        }
                     <td>$@cust.Balancedue</td>
+                    <td>
+                        <div class="btn-group w-100">
+                            <button type="button" class="btn btn-outline-primary">View</button>
+                            <button type="button" class="btn btn-outline-success">Edit</button>
+                        </div>
+                    </td>
                 </tr>
             }
         </tbody>
     </table>
+    <div class="row justify-content-center">
+        <div class="col justify-content-center">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item"><a class="page-link" href ="#/" @onclick="@(async () => await PreviousPage())" @onclick:preventDefault>Previous</a></li>
+                    <li class="page-item"><a class="page-link" href ="#/">1</a></li>
+                    <li class="page-item"><a class="page-link" href ="#/">2</a></li>
+                    <li class="page-item"><a class="page-link" href ="#/">3</a></li>
+                    <li class="page-item"><a class="page-link" href ="#/" @onclick="@(async () => await NextPage())" @onclick:preventDefault>Next</a></li>
+                </ul>
+            </nav>
+            
+        </div>
+    </div>
 
-    <button id="randomCustomer" class="btn btn-primary" @onclick="RandomCustomer">Click me!</button>
+    
 
 }
 else
@@ -76,18 +104,22 @@ else
         Customer = await HttpLib.GetFromJsonAsync<Customer>("api/customer/" + random.Next(1, 5000).ToString());
     }
 
-    public async void PreviousPage()
+    public async Task PreviousPage()
     {
-        Console.WriteLine("clicked previous");
+
         pageNumber--;
+
+        if (pageNumber <= 0)
+            pageNumber = 1;
 
         CustomerList = await Paginate();
     }
 
-    public async void NextPage()
+    public async Task NextPage()
     {
-        Console.WriteLine("clicked");
         pageNumber++;
+
+        Math.Clamp(pageNumber, 1, 99);
 
         CustomerList = await Paginate();
     }
