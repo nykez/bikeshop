@@ -1,6 +1,7 @@
 ﻿@page "/customers/edit/{id}"
 @using System.Net.Http
 @inject HttpClient HttpLib
+@inject IToastService toasterService;
 
 @if (customer == null)
 {
@@ -71,6 +72,11 @@ else
     {
         Console.WriteLine($"api/customer/{customer.Customerid}");
         var status = await HttpLib.PutAsJsonAsync($"api/customer/{customer.Customerid}", customer);
-        Console.WriteLine(status.StatusCode);
+        if(status.IsSuccessStatusCode)
+        {
+            toasterService.ShowSuccess("Customer updated.");
+        }
+        else
+            toasterService.ShowError("Customer failed to update");
     }
 }

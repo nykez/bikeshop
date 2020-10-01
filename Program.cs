@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Blazored.Toast;
 
 namespace frontendapi_bikeshop
 {
@@ -18,6 +19,7 @@ namespace frontendapi_bikeshop
             builder.RootComponents.Add<App>("app");
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://se2-database.azurewebsites.net") });
+            builder.Services.AddBlazoredToast();
 
             await builder.Build().RunAsync();
         }
