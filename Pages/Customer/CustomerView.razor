@@ -1,0 +1,29 @@
+﻿@page "/customers/view/{id}"
+@using System.Net.Http
+@inject HttpClient HttpLib
+
+<h1>Customer Details</h1>
+
+@if (customer == null)
+{
+    <p>Loading customer details...</p>
+}
+else
+{
+    <p>@customer.Firstname @customer.Lastname</p>
+}
+
+
+
+@code {
+
+    [Parameter]
+    public string id { get; set; }
+
+    Customer customer;
+
+    protected override async Task OnInitializedAsync() {
+        customer = await HttpLib.GetFromJsonAsync<Customer>($"api/customer/{id}");
+    }
+
+}
