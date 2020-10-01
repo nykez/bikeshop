@@ -43,8 +43,9 @@
             <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-center">
                     <li class="page-item"><a class="page-link" href="#/" @onclick="@(async () => await PreviousPage())" @onclick:preventDefault>Previous</a></li>
-                    @for(int i = pageNumber; i < pageNumber + 4; i++) {
+                    @for(int i = pageNumber-2; i < pageNumber + 2; i++) {
                         int buttonNumber = i;
+                        if(i < 1) continue;
                         <li class="page-item"><a class="page-link" href="#/" @onclick="@(async () => await ChoosePage(buttonNumber))" @onclick:preventDefault>@buttonNumber</a></li>
                     }
                     <li class="page-item"><a class="page-link" href="#/" @onclick="@(async () => await NextPage())" @onclick:preventDefault>Next</a></li>
