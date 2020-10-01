@@ -1,12 +1,11 @@
 ﻿@page "/customers"
 @using System.Net.Http
 @inject HttpClient HttpLib
-
+@inject IJSRuntime JsRuntime;
 <h1>Customer</h1>
 
 
-@if (CustomerList != null)
-{
+@if(CustomerList != null) {
 
     <table class="table table-striped table-bordered">
         <thead class="thead-dark">
@@ -19,19 +18,15 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var cust in CustomerList)
-            {
+            @foreach(var cust in CustomerList) {
                 <tr>
                     <td>@cust.Customerid</td>
                     <td>@cust.Firstname @cust.Lastname</td>
-                        @if (@cust.Address == "0")
-                        {
-                            <td>No address record </td>
-                        }
-                        else
-                        {
-                            <td>@cust.Address</td>
-                        }
+                    @if(@cust.Address == "0") {
+                        <td>No address record </td>
+                    } else {
+                        <td>@cust.Address</td>
+                    }
                     <td>$@cust.Balancedue</td>
                     <td>
                         <div class="btn-group w-100">
@@ -47,29 +42,27 @@
         <div class="col justify-content-center">
             <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-center">
-                    <li class="page-item"><a class="page-link" href ="#/" @onclick="@(async () => await PreviousPage())" @onclick:preventDefault>Previous</a></li>
-                    <li class="page-item"><a class="page-link" href ="#/">1</a></li>
-                    <li class="page-item"><a class="page-link" href ="#/">2</a></li>
-                    <li class="page-item"><a class="page-link" href ="#/">3</a></li>
-                    <li class="page-item"><a class="page-link" href ="#/" @onclick="@(async () => await NextPage())" @onclick:preventDefault>Next</a></li>
+                    <li class="page-item"><a class="page-link" href="#/" @onclick="@(async () => await PreviousPage())" @onclick:preventDefault>Previous</a></li>
+                    @for(int i = pageNumber; i < pageNumber + 4; i++) {
+                        int buttonNumber = i;
+                        <li class="page-item"><a class="page-link" href="#/" @onclick="@(async () => await ChoosePage(buttonNumber))" @onclick:preventDefault>@buttonNumber</a></li>
+                    }
+                    <li class="page-item"><a class="page-link" href="#/" @onclick="@(async () => await NextPage())" @onclick:preventDefault>Next</a></li>
                 </ul>
             </nav>
-            
+
         </div>
     </div>
 
-    
 
-}
-else
-{
+
+} else {
     <p>Loading Customers...</p>
 }
 
 
 
-@if (Customer != null)
-{
+@if(Customer != null) {
     <p>@Customer.Firstname @Customer.Lastname - @Customer.Address (Balance: $@Customer.Balancedue)</p>
 }
 
@@ -83,45 +76,44 @@ else
 
     private Random random = new Random();
 
-    protected override async Task OnInitializedAsync()
-    {
+    protected override async Task OnInitializedAsync() {
         var customerList = await HttpLib.GetFromJsonAsync<Customer[]>($"api/customer?pageNumber={pageNumber}&pageSize={pageSize}");
-        
-        if (customerList.Any())
-        {
+
+        if(customerList.Any()) {
             CustomerList = customerList;
         }
-            
+
     }
 
-    private async Task<Customer[]> Paginate()
-    {
+    private async Task<Customer[]> Paginate() {
         return await HttpLib.GetFromJsonAsync<Customer[]>($"api/customer?pageNumber={pageNumber}&pageSize={pageSize}");
     }
 
-    public async Task RandomCustomer()
-    {
+    public async Task RandomCustomer() {
         Customer = await HttpLib.GetFromJsonAsync<Customer>("api/customer/" + random.Next(1, 5000).ToString());
     }
 
-    public async Task PreviousPage()
-    {
+    public async Task PreviousPage() {
 
         pageNumber--;
 
-        if (pageNumber <= 0)
+        if(pageNumber <= 0)
             pageNumber = 1;
 
         CustomerList = await Paginate();
     }
 
-    public async Task NextPage()
-    {
+    public async Task NextPage() {
         pageNumber++;
 
         Math.Clamp(pageNumber, 1, 99);
 
         CustomerList = await Paginate();
     }
-    
+
+    public async Task ChoosePage(int pageClick) {
+        pageNumber = pageClick;
+        CustomerList = await Paginate();
+    }
+
 }
