@@ -8,32 +8,29 @@
 @if (CustomerList != null)
 {
 
-    <div class="container-fluid mb-5">
-    <div class="row">
-            @foreach (var item in CustomerList)
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Balance</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var cust in CustomerList)
             {
-            <div class="col-lg-2 col-md-3 col-sm-6 mb-1">
-                <div class="card-deck">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">@item.Firstname @item.Lastname</h5>
-                            <p class="card-text">Phone: @item.Phone</p>
-                            <p class="card-text">Email: @item.Address</p>
-                            <p class="card-text">Balance: $@item.Balancedue</p>
-                            <a href="#" class="btn btn-primary">View Customer</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                <tr>
+                    <td>@cust.Customerid</td>
+                    <td>@cust.Firstname @cust.Lastname</td>
+                    <td>@cust.Address</td>
+                    <td>$@cust.Balancedue</td>
+                </tr>
             }
-        </div>
-    <div class="btn-group btn-group-sm mr-5" role="group">
-        <button type="button" class="btn btn-primary" @onclick="PreviousPage"> Previous Page </button>
-        <button type="button" class="btn btn-primary" @onclick="RandomCustomer"> Random Customer </button>
-        <button type="button" class="btn btn-primary" @onclick="NextPage"> Next Page </button>
-    </div>
-</div>
+        </tbody>
+    </table>
 
+    <button id="randomCustomer" class="btn btn-primary" @onclick="RandomCustomer">Click me!</button>
 
 }
 else
@@ -74,18 +71,9 @@ else
         return await HttpLib.GetFromJsonAsync<Customer[]>($"api/customer?pageNumber={pageNumber}&pageSize={pageSize}");
     }
 
-    public async void RandomCustomer()
+    public async Task RandomCustomer()
     {
-        var customer = await HttpLib.GetFromJsonAsync<Customer>("api/customer/" + random.Next(1, 5000).ToString());
-        
-        if (customer != null)
-        {
-            Customer = customer;
-        }
-        else
-        {
-            RandomCustomer();
-        }
+        Customer = await HttpLib.GetFromJsonAsync<Customer>("api/customer/" + random.Next(1, 5000).ToString());
     }
 
     public async void PreviousPage()
