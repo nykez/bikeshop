@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace frontendapi_bikeshop.Models
 {
     public partial class Customer
