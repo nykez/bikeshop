@@ -1,8 +1,11 @@
 ﻿@page "/"
 @inject HttpClient HttpLib
+@inject NavigationManager navigationService
 
-
-<h1>Hello, user!</h1>
-
-Welcome to the Bicycle shop!
-
+<div class="jumbotron">
+  <h1 class="display-4">Hello, customer!</h1>
+  <p class="text text-dark"><i>We founded this bike-shop in 2015. Providing the highest quality bicycles and parts possible!</i></p>
+  <hr class="my-4">
+  <button class="btn btn-outline-primary btn-lg" @onclick="@( () => navigationService.NavigateTo("bicycles") )">View Bikes</button>
+  <button class="btn btn-outline-success btn-lg" @onclick="@( () => navigationService.NavigateTo("parts") )" role="button">View Parts</button>
+</div>
