@@ -1,6 +1,10 @@
 ﻿@page "/createEntry"
+@inject NavigationManager NavigationManager
 
 <h3>CreateEntryView</h3>
+
+<p>Select a table</p>>
+<button type="button" class="btn btn-outline-primary" @onclick="@( () => NavigationManager.NavigateTo("/createEntry/Bicycle") )">View</button>
 
 @code {
 
