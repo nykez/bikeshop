@@ -4,7 +4,7 @@
 @inject HttpClient HttpLib
 
 <div class="row">
-    <div class="col-3 card card-body bg-light mt-2">
+    <div class="col-3 card card-body bg-light mt-2 max-height: 100%;">
         <h4>Filters</h4>
         <div class="card mb-1">
             <div class="card-header">
@@ -68,19 +68,55 @@
     </div>
     <div class="col-9">
 
-        <div class="col-3 card card-body bg-light mt-2">
+        <div class="card card-body bg-light mt-2">
+            @if (bicycles == null)
+            {
+                <p>Loading bicycles...</p>
+            }
+            else
+            {
+                <div class="card-deck">
+                @foreach (var bike in bicycles)
+                {
+                        <div class="card m-1" style="min-width: 18rem; max-width:33.0%;">
+                            <div class="card-body">
+                                <h5 class="card-title">@bike.Modeltype<span class="badge badge-pill badge-secondary float-right">$@bike.Listprice</span></h5>
+                                
+
+                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                <a href="#" class="btn btn-outline-primary">View</a>
+                                <a href="#" class="btn btn-outline-success">Add To Cart</a>
+                            </div>
+                        </div>
+                }
+                </div>
+            }
 
         </div>
 
     </div>
 </div>
+<div class="row">
+</div>
 
 @code {
+
+    Bicycle[] bicycles;
+
+    private int pageSize = 10;
+    private int pageNumber = 1;
 
     public List<string> filter_modelTypes = new List<string>() {"Hybrid", "Mountain", "Race", "Road", "Tour", "Track"};
 
     public List<string> filter_construction = new List<string>() {"Tig Welded", "Welded", "Bonded"};
 
+    protected override async Task OnInitializedAsync() {
+        var bicycleList = await HttpLib.GetFromJsonAsync<Bicycle[]>($"api/bicycles?pageNumber={pageNumber}&pageSize={pageSize}");
 
+        if(bicycleList.Any()) {
+            bicycles = bicycleList;
+        }
+
+    }
  
 }
