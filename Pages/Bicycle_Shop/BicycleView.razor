@@ -113,11 +113,10 @@
 
     protected override async Task OnInitializedAsync() {
         var bicycleList = await HttpLib.GetFromJsonAsync<Bicycle[]>($"api/bicycles?pageNumber={pageNumber}&pageSize={pageSize}");
-
+        
         if(bicycleList.Any()) {
             bicycles = bicycleList;
         }
-
     }
- 
+    
 }

@@ -1,7 +1,10 @@
+using System.Collections.Generic;
+
 namespace frontendapi_bikeshop.Models
 {
     public class Bicycle
     {
+
         public int Serialnumber { get; set; }
         public int? Customerid { get; set; }
         public string Modeltype { get; set; }
@@ -27,5 +30,6 @@ namespace frontendapi_bikeshop.Models
         public int? Shipprice { get; set; }
         public int? Frameprice { get; set; }
         public int? Componentlist { get; set; }
+        public Paint Paint { get; set; }
     }
 }
