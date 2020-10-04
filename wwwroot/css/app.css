@@ -4,6 +4,18 @@ html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
+.row-height{
+    height: 90%;
+    max-height: 90%;
+  }
+  
+  /*Set up the columns with a 100% height, body color and overflow scroll*/
+  
+.left{
+    max-height: 100vh;
+    overflow-y: scroll;
+  }
+
 a, .btn-link {
     color: #0366d6;
 }
@@ -21,7 +33,7 @@ app {
 }
 
 .top-row {
-    height: 3.5rem;
+    height: 3.0rem;
     display: flex;
     align-items: center;
 }
@@ -97,9 +109,9 @@ app {
                 color: white;
             }
 
-.content {
+/* .content {
     padding-top: 1.1rem;
-}
+} */
 
 .navbar-toggler {
     background-color: rgba(255, 255, 255, 0.1);

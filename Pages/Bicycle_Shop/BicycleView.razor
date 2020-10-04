@@ -4,8 +4,8 @@
 @inject HttpClient HttpLib
 @inject IToastService toasterService;
 
-    <div class="row">
-        <div class="col-3 card card-body bg-light mt-2">
+    <div class="row row-height" style="max-height: 90%;">
+        <div class="col-3 px-md-5 card card-body bg-light" style="max-height: 90%;">
             <h4>Filters</h4>
             <div class="card mb-1">
                 <div class="card-header">
@@ -67,33 +67,29 @@
             <button class="btn btn-outline-primary" @onclick="ApplyChanges">Apply Changes</button>
             
         </div>
-        <div class="col-9">
+        <div class="col-9 px-md-5 left card card-body bg-light" style="max-height: 90%">
 
-            <div class="card card-body bg-light mt-2">
-                @if(bicycles == null) {
-                    <p>Loading bicycles...</p>
-                } else {
-                    <div class="card-deck">
-                        @foreach(var bike in bicycles) {
-                            <div class="card m-1" style="min-width: 18rem; max-width:33.0%;">
-                                <div class="card-header">
-                                    <h5 class="card-title">@bike.Modeltype<span class="badge badge-pill badge-primary float-right">$@bike.Listprice</span></h5>
-                                </div>
-                                <div class="card-body">
-                                    <h6><span class="badge badge-pill badge-secondary">@bike.Construction</span> <span class="badge badge-pill badge-secondary" style="background-color: @((bike?.Paint?.Colorlist ?? "NONE"))">@((bike?.Paint?.Colorlist ?? "N/A"))</span> <span class="badge badge-pill badge-secondary">@bike.Framesize FRAMESIZE</span></h6>
-                                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <a href="#" class="btn btn-outline-primary">View</a>
-                                    <a href="#" class="btn btn-outline-success" @onclick:preventDefault @onclick='( () => toasterService.ShowError("You must be logged in to this."))'>Add To Cart</a>
-                                </div>
+            @if(bicycles == null) {
+                <p>Loading bicycles...</p>
+            } else {
+                <div class="card-deck">
+                    @foreach(var bike in bicycles) {
+                        <div class="card m-1" style="min-width: 18rem; max-width:33.0%;">
+                            <div class="card-header">
+                                <h5 class="card-title">@bike.Modeltype<span class="badge badge-pill badge-primary float-right">$@bike.Listprice</span></h5>
                             </div>
-                        }
-                    </div>
-                }
+                            <div class="card-body">
+                                <h6><span class="badge badge-pill badge-secondary">@bike.Construction</span> <span class="badge badge-pill badge-secondary" style="background-color: @((bike?.Paint?.Colorlist ?? "NONE"))">@((bike?.Paint?.Colorlist ?? "N/A"))</span> <span class="badge badge-pill badge-secondary">@bike.Framesize FRAMESIZE</span></h6>
+                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                <a href="#" class="btn btn-outline-primary">View</a>
+                                <a href="#" class="btn btn-outline-success" @onclick:preventDefault @onclick='( () => toasterService.ShowError("You must be logged in to this."))'>Add To Cart</a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
 
-            </div>
-
-        </div>
-        <div class="row justify-content-center">
+            <div class="row justify-content-center">
             <div class="col-12 justify-content-center">
                 <nav aria-label="Page navigation example">
                     <ul class="pagination justify-content-center">
@@ -115,6 +111,10 @@
                 </nav>
 
             </div>
+
+        </div>
+        
+
         </div>
     </div>
 <div class="row">
@@ -126,7 +126,7 @@
     public string filter_ModelType { get; set; } = "";
     public string filter_Construction { get; set; } = "";
 
-    private int pageSize = 10;
+    private int pageSize = 20;
     private int pageNumber = 1;
     public List<string> filter_modelTypes = new List<string>() {"Hybrid", "Mountain", "Race", "Road", "Tour", "Track"};
     public List<string> filter_construction = new List<string>() {"Tig Welded", "Welded", "Bonded"};
