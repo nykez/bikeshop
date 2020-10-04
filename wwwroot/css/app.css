@@ -5,8 +5,7 @@ html, body {
 }
 
 .row-height{
-    height: 90%;
-    max-height: 90%;
+    height: 100vh;
   }
   
   /*Set up the columns with a 100% height, body color and overflow scroll*/
