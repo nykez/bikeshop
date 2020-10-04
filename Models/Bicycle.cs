@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 namespace frontendapi_bikeshop.Models
@@ -14,6 +15,9 @@ namespace frontendapi_bikeshop.Models
         public int? Paintid { get; set; }
         [Required]
         public int? Framesize { get; set; }
+        public DateTime OrderDate { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime ShipDate { get; set; }
         [Required]
         public int? Shipemployee { get; set; }
         [Required]
