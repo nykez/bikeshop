@@ -1,7 +1,6 @@
 ﻿@page "/bicycles"
 @using System.Net.Http
 @using System.Collections.Generic
-
 @inject HttpClient HttpLib
 
     <div class="row">
@@ -132,16 +131,30 @@
     public List<string> filter_construction = new List<string>() {"Tig Welded", "Welded", "Bonded"};
 
     protected override async Task OnInitializedAsync() {
+
         var bicycleList = await HttpLib.GetFromJsonAsync<Bicycle[]>($"api/bicycles?pageNumber={pageNumber}&pageSize={pageSize}");
 
         if(bicycleList.Any()) {
             bicycles = bicycleList;
         }
         
+        
     }
 
     private async Task<Bicycle[]> Paginate() {
-        return await HttpLib.GetFromJsonAsync<Bicycle[]>($"api/bicycles?pageNumber={pageNumber}&pageSize={pageSize}");
+        var apiRoute = $"api/bicycles?pageNumber={pageNumber}&pageSize={pageSize}";
+
+        if (!string.IsNullOrEmpty(filter_Construction))
+        {
+            apiRoute = QueryHelpers.AddQueryString(apiRoute, "construction", filter_Construction);
+        }
+
+        if (!string.IsNullOrEmpty(filter_ModelType))
+        {
+            apiRoute = QueryHelpers.AddQueryString(apiRoute, "modeltype", filter_ModelType);
+        }
+
+        return await HttpLib.GetFromJsonAsync<Bicycle[]>(apiRoute);
     }
 
     public async Task PreviousPage() {
@@ -169,7 +182,19 @@
 
     public async Task ApplyChanges()
     {
-        
+        pageNumber = 1;
+        bicycles = await Paginate();
+    }
+
+    public async Task ClearFilters()
+    {
+        filter_Construction = "";
+        filter_ModelType = "";
+
+        pageNumber = 1;
+        pageSize = 10;
+
+        bicycles = await Paginate();
     }
 
 
