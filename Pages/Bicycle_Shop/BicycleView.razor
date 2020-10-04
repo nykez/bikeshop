@@ -97,7 +97,7 @@
             <div class="col-12 justify-content-center">
                 <nav aria-label="Page navigation example">
                     <ul class="pagination justify-content-center">
-                        <li class="page-item"><a class="page-link" href="#/" @onclick="@(async () => await PreviousPage())" @onclick:preventDefault>Previous</a></li>
+                        <li class="page-item @(pageNumber == 1 ? "disabled" : null)"><a class="page-link " href="#/" @onclick="@(async () => await PreviousPage())" @onclick:preventDefault>Previous</a></li>
                         @for(int i = pageNumber - 2; i < pageNumber + 2; i++) {
                             int buttonNumber = i;
                             if(i < 1) continue;
