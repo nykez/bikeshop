@@ -1,7 +1,7 @@
 ﻿@page "/bicycles"
 @using System.Net.Http
 @using System.Collections.Generic
-@using System.Diagnostics;
+
 @inject HttpClient HttpLib
 
     <div class="row">
@@ -14,7 +14,7 @@
                 <div class="card-body">
                     @foreach(var item in filter_modelTypes) {
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="model-type" value="@item">
+                            <input class="form-check-input" type="radio" name="model-type" id="@item" value="@item" @onchange="ModelTypeSelection" checked=@(filter_ModelType.Equals(@item, StringComparison.OrdinalIgnoreCase))>
                             <label class="form-check-label" for="model-type">
                                 @item
                             </label>
@@ -31,7 +31,7 @@
                 <div class="card-body">
                     @foreach(var item in filter_construction) {
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="construction-type" id="construction-@item">
+                            <input class="form-check-input" type="radio" name="construction-type" id="item" value="@item" @onchange="ConstructionTypeSelection" checked=@(filter_Construction.Equals(@item, StringComparison.OrdinalIgnoreCase))>
                             <label class="form-check-label" for="construction-type">
                                 @item
                             </label>
@@ -123,8 +123,8 @@
 
     Bicycle[] bicycles;
 
-    public string filter_ModelType { get; set; } 
-    public string filter_Construction { get; set; }
+    public string filter_ModelType { get; set; } = "";
+    public string filter_Construction { get; set; } = "";
 
     private int pageSize = 10;
     private int pageNumber = 1;
@@ -137,6 +137,7 @@
         if(bicycleList.Any()) {
             bicycles = bicycleList;
         }
+        
     }
 
     private async Task<Bicycle[]> Paginate() {
@@ -166,19 +167,21 @@
         bicycles = await Paginate();
     }
 
-
-    public async Task GetFilters() {
-        pageNumber = 1;
-        bicycles = await Paginate();
-    }
-
-    public void AddFilter() {
-
-    }
-
     public async Task ApplyChanges()
     {
-        Console.WriteLine(filter_ModelType);
-        Console.WriteLine(filter_Construction);
+        
+    }
+
+
+    /// Radio checkbox handlers
+    
+    void ModelTypeSelection(ChangeEventArgs args)
+    {
+        filter_ModelType = args.Value.ToString();
+    }
+
+    void ConstructionTypeSelection(ChangeEventArgs args)
+    {
+        filter_Construction = args.Value.ToString();
     }
 }
