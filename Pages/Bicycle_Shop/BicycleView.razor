@@ -78,7 +78,7 @@
                                     <h5 class="card-title">@bike.Modeltype<span class="badge badge-pill badge-primary float-right">$@bike.Listprice</span></h5>
                                 </div>
                                 <div class="card-body">
-                                    <h6><span class="badge badge-pill badge-secondary">@bike.Construction</span> <span class="badge badge-pill badge-secondary" style="background-color: @((bike?.Paint?.Colorlist ?? "NONE"))">@((bike?.Paint?.Colorlist ?? "NONE"))</span> <span class="badge badge-pill badge-secondary">@bike.Framesize FRAMESIZE</span></h6>
+                                    <h6><span class="badge badge-pill badge-secondary">@bike.Construction</span> <span class="badge badge-pill badge-secondary" style="background-color: @((bike?.Paint?.Colorlist ?? "NONE"))">@((bike?.Paint?.Colorlist ?? "N/A"))</span> <span class="badge badge-pill badge-secondary">@bike.Framesize FRAMESIZE</span></h6>
                                     <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
                                     <a href="#" class="btn btn-outline-primary">View</a>
                                     <a href="#" class="btn btn-outline-success">Add To Cart</a>
@@ -155,7 +155,6 @@
         pageNumber = pageClick;
         bicycles = await Paginate();
     }
-
 
 
     public async Task GetFilters() {
