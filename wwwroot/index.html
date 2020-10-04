@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 
 <head>
@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Bikeshop</title>
     <base href="/" />
-    
+
     <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
     <link href="_content/Blazored.Toast/blazored-toast.min.css" rel="stylesheet" />
     <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
@@ -25,5 +25,12 @@
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
 </body>
-
 </html>
+<script>
+    function uncheckBoxes() {
+        checkBoxes = document.getElementsByClassName("form-check-input");
+        for (i = 0; i < checkBoxes.length; i++) {
+            checkBoxes[i].checked = false;
+        }
+    }
+</script>
