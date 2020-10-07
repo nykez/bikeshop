@@ -145,13 +145,11 @@
         var apiRoute = $"api/component?pageNumber={pageNumber}&pageSize={pageSize}";
 
         if(filter_Constructions.Count > 0) {
-            apiRoute = QueryHelpers.AddQueryString(apiRoute, "construction", BuildQueryString(filter_Constructions));
-            Console.WriteLine(apiRoute);
+            apiRoute = QueryHelpers.AddQueryString(apiRoute, "road", BuildQueryString(filter_Constructions));
         }
 
         if(filter_ModelTypes.Count > 0) {
-            apiRoute = QueryHelpers.AddQueryString(apiRoute, "modeltype", BuildQueryString(filter_ModelTypes));
-            Console.WriteLine(apiRoute);
+            apiRoute = QueryHelpers.AddQueryString(apiRoute, "category", BuildQueryString(filter_ModelTypes));
         }
 
         return await HttpLib.GetFromJsonAsync<Component[]>(apiRoute);
