@@ -1,24 +1,26 @@
 ﻿@page "/parts"
 @using System.Net.Http
 @using System.Collections.Generic
+@using System.Diagnostics;
 @inject HttpClient HttpLib
+@inject IToastService toasterService;
+@inject IJSRuntime JSRuntime;
 
-<div class="row">
-    <div class="col-3 card card-body bg-light mt-2">
+<div class="row row-height" style="max-height: 90%;">
+    <div class="col-3 card card-body bg-light" style="max-height: 90%;">
         <h4>Filters</h4>
         <div class="card mb-1">
             <div class="card-header">
                 Model Type
             </div>
             <div class="card-body">
-                @foreach (var item in filter_modelTypes)
-                {
+                @foreach(var item in filter_modelTypes) {
                     <div class="form-check">
-                    <input class="form-check-input" type="radio" name="model-type" id="model-@item">
-                    <label class="form-check-label" for="model-type">
-                        @item
-                    </label>
-                </div>
+                        <input class="form-check-input" type="checkbox" name="model-type" id="@item" value="@item" @onchange="eventArgs => { ModelClicked(item, eventArgs.Value); }">
+                        <label class="form-check-label" for="model-type">
+                            @item
+                        </label>
+                    </div>
                 }
 
             </div>
@@ -29,19 +31,18 @@
                 Construction
             </div>
             <div class="card-body">
-                @foreach (var item in filter_construction)
-                {
+                @foreach(var item in filter_construction) {
                     <div class="form-check">
-                    <input class="form-check-input" type="radio" name="construction-type" id="construction-@item">
-                    <label class="form-check-label" for="construction-type">
-                        @item
-                    </label>
-                </div>
+                        <input class="form-check-input" type="checkbox" name="construction-type" id="item" value="@item" @onchange="eventArgs => { ConstructionClicked(item, eventArgs.Value); }">
+                        <label class="form-check-label" for="construction-type">
+                            @item
+                        </label>
+                    </div>
                 }
             </div>
         </div>
 
-        
+
         <div class="card mb-1">
             <div class="card-header">
                 Pricing
@@ -50,7 +51,7 @@
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label>Min</label>
-                        <input type="number" class="form-control" id="priceMax" placeholder="$0">
+                        <input type="number" class="form-control" id="priceMin" placeholder="$0">
                     </div>
 
                     <div class="form-group col-md-6 text-right">
@@ -60,27 +61,182 @@
                 </div>
 
                 <button class='btn btn-outline-success w-100'>Save Changes</button>
-                
+
             </div>
         </div>
 
-        <button class="btn btn-outline-primary">Apply Changes</button>
-    </div>
-    <div class="col-9">
+        <button class="btn btn-outline-secondary mb-1" @onclick="ClearFilters">Clear Filters</button>
+        <button class="btn btn-outline-primary" @onclick="ApplyChanges">Apply Changes</button>
 
-        <div class="col-3 card card-body bg-light mt-2">
+    </div>
+    <div class="col-9 left card card-body bg-light" style="max-height: 90%">
+
+        @if(components == null) {
+            <p>Loading parts...</p>
+        } else {
+            <div class="card-deck">
+                @foreach(var bike in components) {
+                    <div class="card m-1" style="min-width: 18rem; max-width:33.0%;">
+                        <div class="card-header">
+                            <h5 class="card-title">@bike.Modeltype<span class="badge badge-pill badge-primary float-right">$@bike.Listprice</span></h5>
+                        </div>
+                        <div class="card-body">
+                            <h6><span class="badge badge-pill badge-secondary">@bike.Construction</span> <span class="badge badge-pill badge-secondary" style="background-color: @((bike?.Paint?.Colorlist ?? "NONE"))">@((bike?.Paint?.Colorlist ?? "N/A"))</span> <span class="badge badge-pill badge-secondary">@bike.Framesize FRAMESIZE</span></h6>
+                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                            <a href="#" class="btn btn-outline-primary">View</a>
+                            <a href="#" class="btn btn-outline-success" @onclick:preventDefault @onclick='(() => toasterService.ShowError("You must be logged in to this."))'>Add To Cart</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        <div class="row justify-content-center">
+            <div class="col-12 justify-content-center">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item @(pageNumber == 1 ? "disabled" : null)"><a class="page-link " href="#/" @onclick="@(async () => await PreviousPage())" @onclick:preventDefault>Previous</a></li>
+                        @for(int i = pageNumber - 2; i < pageNumber + 2; i++) {
+                            int buttonNumber = i;
+                            if(i < 1) continue;
+                            @if(i == pageNumber) {
+                                <li class="page-item active"><a class="page-link" href="#/" @onclick="@(async () => await ChoosePage(buttonNumber))" @onclick:preventDefault>@buttonNumber</a></li>
+                            } else {
+                                <li class="page-item"><a class="page-link" href="#/" @onclick="@(async () => await ChoosePage(buttonNumber))" @onclick:preventDefault>@buttonNumber</a></li>
+                            }
+                        }
+                        <li class="page-item"><a class="page-link" href="#/" @onclick="@(async () => await NextPage())" @onclick:preventDefault>Next</a></li>
+                    </ul>
+                </nav>
+
+            </div>
 
         </div>
 
+
     </div>
+</div>
+<div class="row">
 </div>
 
 @code {
 
-    public List<string> filter_modelTypes = new List<string>() {"Hybrid", "Mountain", "Race", "Road", "Tour", "Track"};
+    Component[] components;
 
-    public List<string> filter_construction = new List<string>() {"Tig Welded", "Welded", "Bonded"};
+    List<String> filter_ModelTypes = new List<String>();
+    List<String> filter_Constructions = new List<String>();
+    private int pageSize = 20;
+    private int pageNumber = 1;
+    public List<String> filter_modelTypes = new List<string>() { "Hybrid", "Mountain", "Race", "Road", "Tour", "Track" };
+    public List<String> filter_construction = new List<string>() { "Tig Welded", "Welded", "Bonded" };
+
+    protected override async Task OnInitializedAsync() {
+
+        var bicycleList = await HttpLib.GetFromJsonAsync<Component[]>($"api/component?pageNumber={pageNumber}&pageSize={pageSize}");
+
+        if(bicycleList.Any()) {
+            components = bicycleList;
+        }
 
 
- 
+    }
+
+    private async Task<Component[]> Paginate() {
+        var apiRoute = $"api/component?pageNumber={pageNumber}&pageSize={pageSize}";
+
+        if(filter_Constructions.Count > 0) {
+            apiRoute = QueryHelpers.AddQueryString(apiRoute, "construction", BuildQueryString(filter_Constructions));
+            Console.WriteLine(apiRoute);
+        }
+
+        if(filter_ModelTypes.Count > 0) {
+            apiRoute = QueryHelpers.AddQueryString(apiRoute, "modeltype", BuildQueryString(filter_ModelTypes));
+            Console.WriteLine(apiRoute);
+        }
+
+        return await HttpLib.GetFromJsonAsync<Component[]>(apiRoute);
+    }
+
+    public async Task PreviousPage() {
+
+        pageNumber--;
+
+        if(pageNumber <= 0)
+            pageNumber = 1;
+
+        components = await Paginate();
+    }
+
+    public async Task NextPage() {
+        pageNumber++;
+
+        Math.Clamp(pageNumber, 1, 99);
+
+        components = await Paginate();
+    }
+
+    public async Task ChoosePage(int pageClick) {
+        pageNumber = pageClick;
+        components = await Paginate();
+    }
+
+    public async Task ApplyChanges() {
+        pageNumber = 1;
+        components = await Paginate();
+    }
+
+    public async Task ClearFilters() {
+        await JSRuntime.InvokeVoidAsync("uncheckBoxes");
+
+        filter_Constructions.Clear();
+        filter_ModelTypes.Clear();
+
+        pageNumber = 1;
+        pageSize = 15;
+        StateHasChanged();
+        components = await Paginate();
+    }
+
+
+    ///checkbox handlers
+
+    void ModelClicked(String modelType, object checkedModel) {
+
+        if((bool)checkedModel) {
+            if(!filter_ModelTypes.Contains(modelType)) {
+                filter_ModelTypes.Add(modelType);
+            }
+        } else {
+            if(filter_ModelTypes.Contains(modelType)) {
+                filter_ModelTypes.Remove(modelType);
+            }
+        }
+    }
+
+    void ConstructionClicked(String constructionType, object checkedConstruction) {
+        if((bool)checkedConstruction) {
+            if(!filter_Constructions.Contains(constructionType)) {
+                filter_Constructions.Add(constructionType);
+            }
+        } else {
+            if(filter_Constructions.Contains(constructionType)) {
+                filter_Constructions.Remove(constructionType);
+            }
+        }
+    }
+
+    String BuildQueryString(List<String> filterList) {
+        String qString = "";
+        if(filterList.Count == 1) {
+            qString = $"{filterList[0]}";
+        } else {
+            qString = $"{filterList[0]}";
+            for(int i = 1; i < filterList.Count; i++) {
+                qString += $"|{filterList[i]}";
+            }
+        }
+        Console.WriteLine(qString);
+        return qString;
+    }
+
 }
