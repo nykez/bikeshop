@@ -11,7 +11,7 @@
         <h4>Filters</h4>
         <div class="card mb-1">
             <div class="card-header">
-                Model Type
+                Category
             </div>
             <div class="card-body">
                 @foreach(var item in filter_modelTypes) {
@@ -28,7 +28,7 @@
 
         <div class="card mb-1">
             <div class="card-header">
-                Construction
+                Road Type
             </div>
             <div class="card-body">
                 @foreach(var item in filter_construction) {
@@ -75,14 +75,14 @@
             <p>Loading parts...</p>
         } else {
             <div class="card-deck">
-                @foreach(var bike in components) {
+                @foreach(var part in components) {
                     <div class="card m-1" style="min-width: 18rem; max-width:33.0%;">
                         <div class="card-header">
-                            <h5 class="card-title">@bike.Modeltype<span class="badge badge-pill badge-primary float-right">$@bike.Listprice</span></h5>
+                            <h5 class="card-title">@part.Productint<span class="badge badge-pill badge-primary float-right">$@part.Listprice</span></h5>
                         </div>
                         <div class="card-body">
-                            <h6><span class="badge badge-pill badge-secondary">@bike.Construction</span> <span class="badge badge-pill badge-secondary" style="background-color: @((bike?.Paint?.Colorlist ?? "NONE"))">@((bike?.Paint?.Colorlist ?? "N/A"))</span> <span class="badge badge-pill badge-secondary">@bike.Framesize FRAMESIZE</span></h6>
-                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                            <h6><span class="badge badge-pill badge-secondary">@part.Category</span> <span class="badge badge-pill badge-secondary">@((part?.Road ?? "N/A"))</span> <span class="badge badge-pill badge-secondary">LENGTH @(part.Length == 0 ? "N/A" : @part.Length.ToString())</span></h6>
+                            <p class="card-text">@part.Description</p>
                             <a href="#" class="btn btn-outline-primary">View</a>
                             <a href="#" class="btn btn-outline-success" @onclick:preventDefault @onclick='(() => toasterService.ShowError("You must be logged in to this."))'>Add To Cart</a>
                         </div>
@@ -127,8 +127,8 @@
     List<String> filter_Constructions = new List<String>();
     private int pageSize = 20;
     private int pageNumber = 1;
-    public List<String> filter_modelTypes = new List<string>() { "Hybrid", "Mountain", "Race", "Road", "Tour", "Track" };
-    public List<String> filter_construction = new List<string>() { "Tig Welded", "Welded", "Bonded" };
+    public List<String> filter_modelTypes = new List<string>() { "Frame", "Headset", "Front deraileur", "Rear deraileur", "Brakes", "Crank", "Handlebar", "Chain"};
+    public List<String> filter_construction = new List<string>() { "MTB", "Road" };
 
     protected override async Task OnInitializedAsync() {
 
