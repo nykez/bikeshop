@@ -147,12 +147,10 @@
 
         if(filter_Constructions.Count > 0) {
             apiRoute = QueryHelpers.AddQueryString(apiRoute, "construction", BuildQueryString(filter_Constructions));
-            Console.WriteLine(apiRoute);
         }
 
         if(filter_ModelTypes.Count > 0) {
             apiRoute = QueryHelpers.AddQueryString(apiRoute, "modeltype", BuildQueryString(filter_ModelTypes));
-            Console.WriteLine(apiRoute);
         }
         if(QueryPrices(min, max, out String priceQuery) && priceQuery != "") {
             apiRoute += $"&{priceQuery}";
@@ -229,9 +227,9 @@
     }
 
     bool QueryPrices(double min, double max, out String qString) {
-        Console.WriteLine($"{min} {max}");
         qString = "";
-        if(min >= max) return false;
+
+        if(min > max && max != 0) return false;
         if(min != 0) qString += $"listprice>{min}";
         if(min != 0 && max != 0) qString += $"&";
         if(max != 0) qString += $"listprice<{max}";
@@ -248,7 +246,6 @@
                 qString += $"|{filterList[i]}";
             }
         }
-        Console.WriteLine(qString);
         return qString;
     }
 
