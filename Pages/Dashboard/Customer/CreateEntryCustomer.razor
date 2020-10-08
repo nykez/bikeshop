@@ -14,31 +14,32 @@
     <div class="card-body ">
         <div class="form-row">
             <div class="form-group col-md-6">
+                <label>First Name</label>
+                <InputText @bind-Value="customer.Firstname" class="form-control" id="FirstName" placeholder="John" required />
+            </div>
+
+            <div class="form-group col-md-6">
+                <label>Last Name</label>
+                <InputText @bind-Value="customer.Lastname" class="form-control" id="LastName" placeholder="Doe" required />
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
                 <label >Phone</label>
                 <InputText @bind-Value="customer.Phone" class="form-control" id="Phone" placeholder="(xxx) xxx-xxxx" required />
             </div>
         </div>
         <div class="form-row">
             <div class="form-group col-md-6">
-                <label>First Name</label>
-                <InputText @bind-Value="customer.Firstname" class="form-control" id="FirstName" placeholder="first" required />
-            </div>
-
-            <div class="form-group col-md-6">
-                <label>Last Name</label>
-                <InputText @bind-Value="customer.Lastname" class="form-control" id="LastName" placeholder="last" required />
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-md-6">
                 <label>Address</label>
-                <InputText @bind-Value="customer.Address" class="form-control" id="Address" placeholder="123 Place Street" required />
+                <InputText @bind-Value="customer.Address" class="form-control" id="Address" placeholder="451 Main Street" required />
             </div>
         </div>
         <div class="form-row">
             <div class="form-group col-md-6">
                 <label>Zip Code</label>
-                <InputText @bind-Value="customer.Zipcode" class="form-control" id="ZipCode" placeholder="12345" required />
+                <InputText @bind-Value="customer.Zipcode" class="form-control" id="ZipCode" placeholder="99912" required />
             </div>
 
             <div class="form-group col-md-6">
@@ -50,7 +51,7 @@
         <div class="form-row">
             <div class="form-group col-md-6">
                 <label>Balance Due</label>
-                <InputNumber @bind-Value="customer.Balancedue" class="form-control" id="Balancedue" placeholder="10" />
+                <InputNumber @bind-Value="customer.Balancedue" class="form-control" id="Balancedue" placeholder="0" />
             </div>
         </div>
 
