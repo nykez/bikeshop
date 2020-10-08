@@ -1,11 +1,12 @@
-﻿@page "/createEntry/bicycle"
+﻿@page "/dashboard/bicycle/create"
 @using System.ComponentModel.DataAnnotations;
 @using frontendapi_bikeshop.Models;
 @using System.Net.Http
 @inject HttpClient HttpLib
 @inject IToastService toasterService;
-<h3>CreateEntryBicycle</h3>
-<p>You made it</p>>
+
+<div class="container">
+<h3>Create Bicycle</h3>
 
 <EditForm Model=@bicycle OnSubmit="OnSubmit">
     <div class="form-group">
@@ -94,7 +95,7 @@
         <input type="submit" class="btn btn-primary" value="Save" />
     </div>
 </EditForm>
-
+</div>
 
 @code {
     Bicycle bicycle = new Bicycle();

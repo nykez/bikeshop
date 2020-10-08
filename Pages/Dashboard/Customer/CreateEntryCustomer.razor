@@ -1,10 +1,11 @@
-﻿@page "/createEntry/Customer"
+﻿@page "/dashboard/customer/create"
 @using frontendapi_bikeshop.Models;
 @using System.Net.Http
 @inject HttpClient HttpLib
 @inject IToastService toasterService;
 
-<h3>CreateEntryCustomer</h3>
+<div class="container">
+<h3>Create Customer</h3>
 <EditForm Model=@customer OnSubmit="OnSubmit">
 <div class="card mb-0">
     <div class="card-header">
@@ -59,6 +60,7 @@
 
 </div>
 </EditForm>
+</div>
 
 @code {
     Customer customer = new Customer();
