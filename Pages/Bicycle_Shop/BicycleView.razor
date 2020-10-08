@@ -60,7 +60,7 @@
                     </div>
                 </div>
 
-                <button class='btn btn-outline-success w-100' @onclick="() => QueryPrices(min, max)">Save Changes</button>
+                <button class='btn btn-outline-success w-100'>Save Changes</button>
 
             </div>
         </div>
@@ -154,7 +154,9 @@
             apiRoute = QueryHelpers.AddQueryString(apiRoute, "modeltype", BuildQueryString(filter_ModelTypes));
             Console.WriteLine(apiRoute);
         }
-
+        if(QueryPrices(min, max, out String priceQuery) && priceQuery != "") {
+            apiRoute += $"&{priceQuery}";
+        }
         return await HttpLib.GetFromJsonAsync<Bicycle[]>(apiRoute);
     }
 
@@ -226,8 +228,14 @@
         }
     }
 
-    void QueryPrices(double min, double max) {
-        if(min >= max) return;
+    bool QueryPrices(double min, double max, out String qString) {
+        Console.WriteLine($"{min} {max}");
+        qString = "";
+        if(min >= max) return false;
+        if(min != 0) qString += $"listprice>{min}";
+        if(min != 0 && max != 0) qString += $"&";
+        if(max != 0) qString += $"listprice<{max}";
+        return true;
     }
 
     String BuildQueryString(List<String> filterList) {
