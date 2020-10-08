@@ -60,7 +60,7 @@
                     </div>
                 </div>
 
-                <button class='btn btn-outline-success w-100' @onclick="() => QueryPrices(min, max)">Save Changes</button>
+                <button class='btn btn-outline-success w-100'>Save Changes</button>
 
             </div>
         </div>
@@ -147,14 +147,14 @@
 
         if(filter_Constructions.Count > 0) {
             apiRoute = QueryHelpers.AddQueryString(apiRoute, "construction", BuildQueryString(filter_Constructions));
-            Console.WriteLine(apiRoute);
         }
 
         if(filter_ModelTypes.Count > 0) {
             apiRoute = QueryHelpers.AddQueryString(apiRoute, "modeltype", BuildQueryString(filter_ModelTypes));
-            Console.WriteLine(apiRoute);
         }
-
+        if(QueryPrices(min, max, out String priceQuery) && priceQuery != "") {
+            apiRoute += $"&{priceQuery}";
+        }
         return await HttpLib.GetFromJsonAsync<Bicycle[]>(apiRoute);
     }
 
@@ -226,8 +226,14 @@
         }
     }
 
-    void QueryPrices(double min, double max) {
-        if(min >= max) return;
+    bool QueryPrices(double min, double max, out String qString) {
+        qString = "";
+
+        if(min > max && max != 0) return false;
+        if(min != 0) qString += $"listprice>{min}";
+        if(min != 0 && max != 0) qString += $"&";
+        if(max != 0) qString += $"listprice<{max}";
+        return true;
     }
 
     String BuildQueryString(List<String> filterList) {
@@ -240,7 +246,6 @@
                 qString += $"|{filterList[i]}";
             }
         }
-        Console.WriteLine(qString);
         return qString;
     }
 
