@@ -84,7 +84,7 @@
                             <h6><span class="badge badge-pill badge-secondary">@part.Category</span> <span class="badge badge-pill badge-secondary">@((part?.Road ?? "N/A"))</span> <span class="badge badge-pill badge-secondary">LENGTH @(part.Length == 0 ? "N/A" : @part.Length.ToString())</span></h6>
                             <p class="card-text">@part.Description</p>
                             <a href="#" class="btn btn-outline-primary">View</a>
-                            <a href="#" class="btn btn-outline-success" @onclick:preventDefault @onclick='(() => toasterService.ShowError("You must be logged in to this."))'>Add To Cart</a>
+                            <a href="#" class="btn btn-outline-success" @onclick:preventDefault @onclick='(() => toasterService.ShowError("You must be logged in to do this."))'>Add To Cart</a>
                         </div>
                     </div>
                 }
