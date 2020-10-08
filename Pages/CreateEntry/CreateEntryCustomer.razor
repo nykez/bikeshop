@@ -67,7 +67,7 @@
         var status = await HttpLib.PostAsJsonAsync($"api/Customer", customer);
         if (status.IsSuccessStatusCode)
         {
-            toasterService.ShowSuccess("Bicycle Added.");
+            toasterService.ShowSuccess("Customer Added.");
         }
         else
             toasterService.ShowError(status.ToString());
