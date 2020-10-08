@@ -1,6 +1,133 @@
 ﻿@page "/dashboard/part/create"
-<h3>CreateEntryPart</h3>
+
+@using frontendapi_bikeshop.Models;
+@using System.Net.Http
+@inject HttpClient HttpLib
+@inject IToastService toasterService;
+
+<h3>CreateEntryCustomer</h3>
+<EditForm Model=@component OnSubmit="OnSubmit">
+    <div class="card mb-0">
+        <div class="card-header">
+            Customer
+        </div>
+        <div class="card-body">
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>Manufacturer ID</label>
+                    <InputNumber @bind-Value="component.Manufacturerid" class="form-control" id="Manfacturerid" placeholder="10" />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>Productint</label>
+                    <InputText @bind-Value="component.Productint" class="form-control" id="Productint" placeholder="Put in a id" required />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>Road</label>
+                    <InputText @bind-Value="component.Road" class="form-control" id="Road" placeholder="something" required />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>Category</label>
+                    <InputText @bind-Value="component.Category" class="form-control" id="Category" placeholder="Cat el gor Eh" required />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>Length</label>
+                    <InputNumber @bind-Value="component.Length" class="form-control" id="Length" placeholder="10" />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>Height</label>
+                    <InputNumber @bind-Value="component.Height" class="form-control" id="Height" placeholder="10" />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>Width</label>
+                    <InputNumber @bind-Value="component.Width" class="form-control" id="Width" placeholder="10" />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>Weight</label>
+                    <InputNumber @bind-Value="component.Weight" class="form-control" id="Weight" placeholder="10" />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>Year</label>
+                    <InputNumber @bind-Value="component.Year" class="form-control" id="Year" placeholder="2020" />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>End Year</label>
+                    <InputNumber @bind-Value="component.Endyear" class="form-control" id="EndYear" placeholder="2021" />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>Description</label>
+                    <InputText @bind-Value="component.Description" class="form-control" id="Productint" placeholder="10" required />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>List Price</label>
+                    <InputNumber @bind-Value="component.Listprice" class="form-control" id="Listprice" placeholder="100.00" />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>Estimated Cost</label>
+                    <InputNumber @bind-Value="component.Estimatedcost" class="form-control" id="Estimatedcost" placeholder="10.00" />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>Quantity on hand</label>
+                    <InputNumber @bind-Value="component.Quantityonhand" class="form-control" id="Quantityonhand" placeholder="11" />
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-success">Save Changes</button>
+        </div>
+
+
+    </div>
+</EditForm>
 
 @code {
-
+    Component component = new Component();
+    public async Task OnSubmit()
+    {
+        var status = await HttpLib.PostAsJsonAsync($"api/Customer", component);
+        if (status.IsSuccessStatusCode)
+        {
+            toasterService.ShowSuccess("Component Added.");
+        }
+        else
+            toasterService.ShowError(status.ToString());
+    }
 }
+
