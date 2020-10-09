@@ -51,16 +51,16 @@
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label>Min</label>
-                        <input type="number" class="form-control" id="priceMin" placeholder="$0">
+                        <input type="number" class="form-control" id="priceMin" placeholder="$0" @bind="@min">
                     </div>
 
                     <div class="form-group col-md-6 text-right">
                         <label>Max</label>
-                        <input type="number" class="form-control" id="priceMax" placeholder="$1,000">
+                        <input type="number" class="form-control" id="priceMax" placeholder="$1,000" @bind="@max">
                     </div>
                 </div>
 
-                <button class='btn btn-outline-success w-100'>Save Changes</button>
+                <button type="button" class='btn btn-outline-success w-100' @onclick="ApplyChanges">Save Changes</button>
 
             </div>
         </div>
@@ -73,6 +73,9 @@
 
         @if(components == null) {
             <p>Loading parts...</p>
+        }
+        else if (components != null && components.Count() == 0){
+            <h5>No results.</h5>
         } else {
             <div class="card-deck">
                 @foreach(var part in components) {
@@ -102,10 +105,10 @@
                             @if(i == pageNumber) {
                                 <li class="page-item active"><a class="page-link" href="#/" @onclick="@(async () => await ChoosePage(buttonNumber))" @onclick:preventDefault>@buttonNumber</a></li>
                             } else {
-                                <li class="page-item"><a class="page-link" href="#/" @onclick="@(async () => await ChoosePage(buttonNumber))" @onclick:preventDefault>@buttonNumber</a></li>
+                                <li class="page-item @(components == null || components.Count() < pageSize ? "disabled" : null)"><a class="page-link" href="#/" @onclick="@(async () => await ChoosePage(buttonNumber))" @onclick:preventDefault>@buttonNumber</a></li>
                             }
                         }
-                        <li class="page-item"><a class="page-link" href="#/" @onclick="@(async () => await NextPage())" @onclick:preventDefault>Next</a></li>
+                        <li class="page-item @(components == null || components.Count() < pageSize ? "disabled" : null)"><a class="page-link" href="#/" @onclick="@(async () => await NextPage())" @onclick:preventDefault>Next</a></li>
                     </ul>
                 </nav>
 
@@ -121,12 +124,13 @@
 
 @code {
 
-    Component[] components;
-
+    public Component[] components;
+    double min;
+    double max;
     List<String> filter_ModelTypes = new List<String>();
     List<String> filter_Constructions = new List<String>();
-    private int pageSize = 20;
-    private int pageNumber = 1;
+    public int pageSize = 20;
+    public int pageNumber = 1;
     public List<String> filter_modelTypes = new List<string>() { "Frame", "Headset", "Front deraileur", "Rear deraileur", "Brakes", "Crank", "Handlebar", "Chain"};
     public List<String> filter_construction = new List<string>() { "MTB", "Road" };
 
@@ -137,7 +141,6 @@
         if(bicycleList.Any()) {
             components = bicycleList;
         }
-
 
     }
 
@@ -150,6 +153,10 @@
 
         if(filter_ModelTypes.Count > 0) {
             apiRoute = QueryHelpers.AddQueryString(apiRoute, "category", BuildQueryString(filter_ModelTypes));
+        }
+
+        if(QueryPrices(min, max, out String priceQuery) && priceQuery != "") {
+            apiRoute += $"&{priceQuery}";
         }
 
         return await HttpLib.GetFromJsonAsync<Component[]>(apiRoute);
@@ -236,5 +243,16 @@
         Console.WriteLine(qString);
         return qString;
     }
+
+    bool QueryPrices(double min, double max, out String qString) {
+            qString = "";
+
+            if(min > max && max != 0) return false;
+            if(min != 0) qString += $"listprice>{min}";
+            if(min != 0 && max != 0) qString += $"&";
+            if(max != 0) qString += $"listprice<{max}";
+            return true;
+        }
+    
 
 }
