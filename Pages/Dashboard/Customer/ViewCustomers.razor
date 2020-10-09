@@ -45,13 +45,17 @@
         <div class="col justify-content-center">
             <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-center">
-                    <li class="page-item"><a class="page-link" href="#/" @onclick="@(async () => await PreviousPage())" @onclick:preventDefault>Previous</a></li>
-                    @for(int i = pageNumber-2; i < pageNumber + 2; i++) {
+                    <li class="page-item @(pageNumber == 1 ? "disabled" : null)"><a class="page-link " href="#/" @onclick="@(async () => await PreviousPage())" @onclick:preventDefault>Previous</a></li>
+                    @for(int i = pageNumber - 2; i < pageNumber + 2; i++) {
                         int buttonNumber = i;
                         if(i < 1) continue;
-                        <li class="page-item"><a class="page-link" href="#/" @onclick="@(async () => await ChoosePage(buttonNumber))" @onclick:preventDefault>@buttonNumber</a></li>
+                        @if(i == pageNumber) {
+                            <li class="page-item active"><a class="page-link" href="#/" @onclick="@(async () => await ChoosePage(buttonNumber))" @onclick:preventDefault>@buttonNumber</a></li>
+                        } else {
+                            <li class="page-item @(CustomerList == null || i >= pageNumber && CustomerList.Count() < pageSize ? "disabled" : null)"><a class="page-link" href="#/" @onclick="@(async () => await ChoosePage(buttonNumber))" @onclick:preventDefault>@buttonNumber</a></li>
+                        }
                     }
-                    <li class="page-item"><a class="page-link" href="#/" @onclick="@(async () => await NextPage())" @onclick:preventDefault>Next</a></li>
+                    <li class="page-item @(CustomerList == null || CustomerList.Count() < pageSize ? "disabled" : null)"><a class="page-link" href="#/" @onclick="@(async () => await NextPage())" @onclick:preventDefault>Next</a></li>
                 </ul>
             </nav>
 
