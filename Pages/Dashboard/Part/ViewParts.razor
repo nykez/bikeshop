@@ -1,0 +1,121 @@
+﻿@page "/dashboard/parts"
+@using System.Net.Http
+@inject HttpClient HttpLib
+@inject IJSRuntime JsRuntime;
+@inject NavigationManager NavigationManager
+
+<h1>Components</h1>
+
+<a href="dashboard/part/create">Create Components</a>
+
+@if(ComponentList != null) {
+    <div class="card bg-light">
+    <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Balance</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var cust in ComponentList) {
+                <tr>
+                    <td>@cust.Customerid</td>
+                    <td>@cust.Firstname @cust.Lastname</td>
+                    @if(@cust.Address == "0") {
+                        <td>No address record </td>
+                    } else {
+                        <td>@cust.Address</td>
+                    }
+                    <td>$@cust.Balancedue</td>
+                    <td>
+                        <div class="btn-group w-100">
+                            <button type="button" class="btn btn-outline-primary" @onclick="@( () => NavigationManager.NavigateTo("customers/view/" + @cust.Customerid) )">View</button>
+                            <button type="button" class="btn btn-outline-success" @onclick="@( () => NavigationManager.NavigateTo("customers/edit/" + @cust.Customerid) )">Edit</button>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="row justify-content-center">
+        <div class="col justify-content-center">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item"><a class="page-link" href="#/" @onclick="@(async () => await PreviousPage())" @onclick:preventDefault>Previous</a></li>
+                    @for(int i = pageNumber-2; i < pageNumber + 2; i++) {
+                        int buttonNumber = i;
+                        if(i < 1) continue;
+                        <li class="page-item"><a class="page-link" href="#/" @onclick="@(async () => await ChoosePage(buttonNumber))" @onclick:preventDefault>@buttonNumber</a></li>
+                    }
+                    <li class="page-item"><a class="page-link" href="#/" @onclick="@(async () => await NextPage())" @onclick:preventDefault>Next</a></li>
+                </ul>
+            </nav>
+
+        </div>
+    </div>
+    </div>
+
+
+} else {
+    <p>Loading Components...</p>
+}
+
+
+
+
+
+@code {
+
+    private int pageSize = 10;
+    private int pageNumber = 1;
+    private Customer[] ComponentList;
+
+    private Customer Component;
+
+    private Random random = new Random();
+
+    protected override async Task OnInitializedAsync() {
+        var componentList = await HttpLib.GetFromJsonAsync<Customer[]>($"api/component?pageNumber={pageNumber}&pageSize={pageSize}");
+
+        if(componentList.Any()) {
+            ComponentList = componentList;
+        }
+
+    }
+
+    private async Task<Customer[]> Paginate() {
+        return await HttpLib.GetFromJsonAsync<Customer[]>($"api/customer?pageNumber={pageNumber}&pageSize={pageSize}");
+    }
+
+    public async Task RandomCustomer() {
+        Component = await HttpLib.GetFromJsonAsync<Customer>("api/customer/" + random.Next(1, 5000).ToString());
+    }
+
+    public async Task PreviousPage() {
+
+        pageNumber--;
+
+        if(pageNumber <= 0)
+            pageNumber = 1;
+
+        ComponentList = await Paginate();
+    }
+
+    public async Task NextPage() {
+        pageNumber++;
+
+        Math.Clamp(pageNumber, 1, 99);
+
+        ComponentList = await Paginate();
+    }
+
+    public async Task ChoosePage(int pageClick) {
+        pageNumber = pageClick;
+        ComponentList = await Paginate();
+    }
+
+}
