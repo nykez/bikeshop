@@ -3,7 +3,7 @@
 @using System.Collections.Generic
 @using System.Diagnostics;
 @inject HttpClient HttpLib
-@inject IToastService toasterService;
+@inject SweetAlertService Swal;
 @inject IJSRuntime JSRuntime;
 
 <div class="row row-height" style="max-height: 90%;">
@@ -84,7 +84,7 @@
                             <h6><span class="badge badge-pill badge-secondary">@bike.Construction</span> <span class="badge badge-pill badge-secondary" style="background-color: @((bike?.Paint?.Colorlist ?? "NONE"))">@((bike?.Paint?.Colorlist ?? "N/A"))</span> <span class="badge badge-pill badge-secondary">@bike.Framesize FRAMESIZE</span></h6>
                             <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
                             <a href="#" class="btn btn-outline-primary">View</a>
-                            <a href="#" class="btn btn-outline-success" @onclick:preventDefault @onclick='(() => toasterService.ShowError("You must be logged in to do this."))'>Add To Cart</a>
+                            <a href="#" class="btn btn-outline-success" @onclick:preventDefault @onclick='(() => Swal.FireAsync("","You must be logged in to do this.", SweetAlertIcon.Warning))'>Add To Cart</a>
                         </div>
                     </div>
                 }
