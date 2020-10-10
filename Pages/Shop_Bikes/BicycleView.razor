@@ -51,7 +51,7 @@
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="colorlist" id="item" value="@item" @onchange="eventArgs => { ColorlistClicked(item, eventArgs.Value); }">
                         <label class="form-check-label" for="construction-type">
-                            @item
+                            @item[0]@item.Substring(1).ToLower()
                         </label>
                     </div>
                 }
