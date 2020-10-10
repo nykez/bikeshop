@@ -42,6 +42,21 @@
             </div>
         </div>
 
+        <div class="card mb-1">
+            <div class="card-header">
+                Construction
+            </div>
+            <div class="card-body">
+                @foreach(var item in all_Colorlists) {
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="colorlist" id="item" value="@item" @onchange="eventArgs => { ColorlistClicked(item, eventArgs.Value); }">
+                        <label class="form-check-label" for="construction-type">
+                            @item
+                        </label>
+                    </div>
+                }
+            </div>
+        </div>
 
         <div class="card mb-1">
             <div class="card-header">
@@ -122,6 +137,8 @@
 @code {
 
     Bicycle[] bicycles;
+    List<String> filter_Colorlists = new List<String>();
+    List<String> all_Colorlists = new List<String>();
     List<String> filter_ModelTypes = new List<String>();
     List<String> filter_Constructions = new List<String>();
     double min;
@@ -134,13 +151,25 @@
     protected override async Task OnInitializedAsync() {
 
         var bicycleList = await HttpLib.GetFromJsonAsync<Bicycle[]>($"api/bicycles?pageNumber={pageNumber}&pageSize={pageSize}");
-
+        var colorlists = await GetColorlists();
         if(bicycleList.Any()) {
             bicycles = bicycleList;
         }
-
-
+        if(colorlists.Any()) {
+            @*foreach(String colorlist in colorlists) {
+                filter_colorLists.Add(colorlist);
+            }*@
+        all_Colorlists = new List<String>(colorlists);
+        }
     }
+
+
+
+    private async Task<List<String>> GetColorlists() {
+        var apiRoute = $"api/paints/list";
+        return await HttpLib.GetFromJsonAsync<List<String>>(apiRoute);
+    }
+
 
     private async Task<Bicycle[]> Paginate() {
         var apiRoute = $"api/bicycles?pageNumber={pageNumber}&pageSize={pageSize}";
@@ -151,6 +180,10 @@
 
         if(filter_ModelTypes.Count > 0) {
             apiRoute = QueryHelpers.AddQueryString(apiRoute, "modeltype", BuildQueryString(filter_ModelTypes));
+        }
+
+        if(filter_Colorlists.Count > 0) {
+            apiRoute = QueryHelpers.AddQueryString(apiRoute, "paint", BuildQueryString(filter_Colorlists));
         }
         if(QueryPrices(min, max, out String priceQuery) && priceQuery != "") {
             apiRoute += $"&{priceQuery}";
@@ -222,6 +255,18 @@
         } else {
             if(filter_Constructions.Contains(constructionType)) {
                 filter_Constructions.Remove(constructionType);
+            }
+        }
+    }
+
+    void ColorlistClicked(String colorList, object checkedColorlist) {
+        if((bool)checkedColorlist) {
+            if(!filter_Colorlists.Contains(colorList)) {
+                filter_Colorlists.Add(colorList);
+            }
+        } else {
+            if(filter_Colorlists.Contains(colorList)) {
+                filter_Colorlists.Remove(colorList);
             }
         }
     }
