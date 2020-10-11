@@ -1,9 +1,9 @@
-﻿@page "/bicycles"
+﻿@page "/parts"
 @using System.Net.Http
 @using System.Collections.Generic
 @using System.Diagnostics;
 @inject HttpClient HttpLib
-@inject IToastService toasterService;
+@inject SweetAlertService Swal;
 @inject IJSRuntime JSRuntime;
 
 <div class="row row-height" style="max-height: 90%;">
@@ -11,7 +11,7 @@
         <h4>Filters</h4>
         <div class="card mb-1">
             <div class="card-header">
-                Model Type
+                Category
             </div>
             <div class="card-body">
                 @foreach(var item in filter_modelTypes) {
@@ -28,7 +28,7 @@
 
         <div class="card mb-1">
             <div class="card-header">
-                Construction
+                Road Type
             </div>
             <div class="card-body">
                 @foreach(var item in filter_construction) {
@@ -60,7 +60,7 @@
                     </div>
                 </div>
 
-                <button class='btn btn-outline-success w-100'>Save Changes</button>
+                <button type="button" class='btn btn-outline-success w-100' @onclick="ApplyChanges">Save Changes</button>
 
             </div>
         </div>
@@ -71,20 +71,23 @@
     </div>
     <div class="col-9 left card card-body bg-light" style="max-height: 90%">
 
-        @if(bicycles == null) {
-            <p>Loading bicycles...</p>
+        @if(components == null) {
+            <p>Loading parts...</p>
+        }
+        else if (components != null && components.Count() == 0){
+            <h5>No results.</h5>
         } else {
             <div class="card-deck">
-                @foreach(var bike in bicycles) {
+                @foreach(var part in components) {
                     <div class="card m-1" style="min-width: 18rem; max-width:33.0%;">
                         <div class="card-header">
-                            <h5 class="card-title">@bike.Modeltype<span class="badge badge-pill badge-primary float-right">$@bike.Listprice</span></h5>
+                            <h5 class="card-title">@part.Productint<span class="badge badge-pill badge-primary float-right">$@part.Listprice</span></h5>
                         </div>
                         <div class="card-body">
-                            <h6><span class="badge badge-pill badge-secondary">@bike.Construction</span> <span class="badge badge-pill badge-secondary" style="background-color: @((bike?.Paint?.Colorlist ?? "NONE"))">@((bike?.Paint?.Colorlist ?? "N/A"))</span> <span class="badge badge-pill badge-secondary">@bike.Framesize FRAMESIZE</span></h6>
-                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                            <h6><span class="badge badge-pill badge-secondary">@part.Category</span> <span class="badge badge-pill badge-secondary">@((part?.Road ?? "N/A"))</span> <span class="badge badge-pill badge-secondary">LENGTH @(part.Length == 0 ? "N/A" : @part.Length.ToString())</span></h6>
+                            <p class="card-text">@part.Description</p>
                             <a href="#" class="btn btn-outline-primary">View</a>
-                            <a href="#" class="btn btn-outline-success" @onclick:preventDefault @onclick='(() => toasterService.ShowError("You must be logged in to this."))'>Add To Cart</a>
+                            <a href="#" class="btn btn-outline-success" @onclick:preventDefault @onclick='(() => Swal.FireAsync("","You must be logged in to do this.", SweetAlertIcon.Warning))'>Add To Cart</a>
                         </div>
                     </div>
                 }
@@ -102,10 +105,10 @@
                             @if(i == pageNumber) {
                                 <li class="page-item active"><a class="page-link" href="#/" @onclick="@(async () => await ChoosePage(buttonNumber))" @onclick:preventDefault>@buttonNumber</a></li>
                             } else {
-                                <li class="page-item"><a class="page-link" href="#/" @onclick="@(async () => await ChoosePage(buttonNumber))" @onclick:preventDefault>@buttonNumber</a></li>
+                                <li class="page-item @(components == null || i >= pageNumber && components.Count() < pageSize ? "disabled" : null)"><a class="page-link" href="#/" @onclick="@(async () => await ChoosePage(buttonNumber))" @onclick:preventDefault>@buttonNumber</a></li>
                             }
                         }
-                        <li class="page-item"><a class="page-link" href="#/" @onclick="@(async () => await NextPage())" @onclick:preventDefault>Next</a></li>
+                        <li class="page-item @(components == null || components.Count() < pageSize ? "disabled" : null)"><a class="page-link" href="#/" @onclick="@(async () => await NextPage())" @onclick:preventDefault>Next</a></li>
                     </ul>
                 </nav>
 
@@ -121,41 +124,42 @@
 
 @code {
 
-    Bicycle[] bicycles;
-    List<String> filter_ModelTypes = new List<String>();
-    List<String> filter_Constructions = new List<String>();
+    public Component[] components;
     double min;
     double max;
-    private int pageSize = 20;
-    private int pageNumber = 1;
-    public List<String> filter_modelTypes = new List<string>() { "Hybrid", "Mountain", "Race", "Road", "Tour", "Track" };
-    public List<String> filter_construction = new List<string>() { "Tig Welded", "Welded", "Bonded" };
+    List<String> filter_ModelTypes = new List<String>();
+    List<String> filter_Constructions = new List<String>();
+    public int pageSize = 20;
+    public int pageNumber = 1;
+    public List<String> filter_modelTypes = new List<string>() { "Frame", "Headset", "Front deraileur", "Rear deraileur", "Brakes", "Crank", "Handlebar", "Chain"};
+    public List<String> filter_construction = new List<string>() { "MTB", "Road" };
 
     protected override async Task OnInitializedAsync() {
 
-        var bicycleList = await HttpLib.GetFromJsonAsync<Bicycle[]>($"api/bicycles?pageNumber={pageNumber}&pageSize={pageSize}");
+        var bicycleList = await HttpLib.GetFromJsonAsync<Component[]>($"api/component?pageNumber={pageNumber}&pageSize={pageSize}");
 
         if(bicycleList.Any()) {
-            bicycles = bicycleList;
+            components = bicycleList;
         }
-
 
     }
 
-    private async Task<Bicycle[]> Paginate() {
-        var apiRoute = $"api/bicycles?pageNumber={pageNumber}&pageSize={pageSize}";
+    private async Task<Component[]> Paginate() {
+        var apiRoute = $"api/component?pageNumber={pageNumber}&pageSize={pageSize}";
 
         if(filter_Constructions.Count > 0) {
-            apiRoute = QueryHelpers.AddQueryString(apiRoute, "construction", BuildQueryString(filter_Constructions));
+            apiRoute = QueryHelpers.AddQueryString(apiRoute, "road", BuildQueryString(filter_Constructions));
         }
 
         if(filter_ModelTypes.Count > 0) {
-            apiRoute = QueryHelpers.AddQueryString(apiRoute, "modeltype", BuildQueryString(filter_ModelTypes));
+            apiRoute = QueryHelpers.AddQueryString(apiRoute, "category", BuildQueryString(filter_ModelTypes));
         }
+
         if(QueryPrices(min, max, out String priceQuery) && priceQuery != "") {
             apiRoute += $"&{priceQuery}";
         }
-        return await HttpLib.GetFromJsonAsync<Bicycle[]>(apiRoute);
+
+        return await HttpLib.GetFromJsonAsync<Component[]>(apiRoute);
     }
 
     public async Task PreviousPage() {
@@ -165,7 +169,7 @@
         if(pageNumber <= 0)
             pageNumber = 1;
 
-        bicycles = await Paginate();
+        components = await Paginate();
     }
 
     public async Task NextPage() {
@@ -173,17 +177,17 @@
 
         Math.Clamp(pageNumber, 1, 99);
 
-        bicycles = await Paginate();
+        components = await Paginate();
     }
 
     public async Task ChoosePage(int pageClick) {
         pageNumber = pageClick;
-        bicycles = await Paginate();
+        components = await Paginate();
     }
 
     public async Task ApplyChanges() {
         pageNumber = 1;
-        bicycles = await Paginate();
+        components = await Paginate();
     }
 
     public async Task ClearFilters() {
@@ -195,7 +199,7 @@
         pageNumber = 1;
         pageSize = 15;
         StateHasChanged();
-        bicycles = await Paginate();
+        components = await Paginate();
     }
 
 
@@ -226,16 +230,6 @@
         }
     }
 
-    bool QueryPrices(double min, double max, out String qString) {
-        qString = "";
-
-        if(min > max && max != 0) return false;
-        if(min != 0) qString += $"listprice>{min}";
-        if(min != 0 && max != 0) qString += $"&";
-        if(max != 0) qString += $"listprice<{max}";
-        return true;
-    }
-
     String BuildQueryString(List<String> filterList) {
         String qString = "";
         if(filterList.Count == 1) {
@@ -246,7 +240,19 @@
                 qString += $"|{filterList[i]}";
             }
         }
+        Console.WriteLine(qString);
         return qString;
     }
+
+    bool QueryPrices(double min, double max, out String qString) {
+            qString = "";
+
+            if(min > max && max != 0) return false;
+            if(min != 0) qString += $"listprice>{min}";
+            if(min != 0 && max != 0) qString += $"&";
+            if(max != 0) qString += $"listprice<{max}";
+            return true;
+        }
+    
 
 }

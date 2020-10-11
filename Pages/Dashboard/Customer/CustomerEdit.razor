@@ -1,7 +1,8 @@
 ﻿@page "/customers/edit/{id}"
 @using System.Net.Http
 @inject HttpClient HttpLib
-@inject IToastService toasterService;
+@inject SweetAlertService Swal;
+@inject NavigationManager navi;
 
 @if (customer == null)
 {
@@ -46,6 +47,7 @@ else
             </div>
             <div class="row">
             <div class="col-md-12 text-right">
+                <button type ="button" class="btn btn-danger" @onclick="DeleteCustomer">Delete Customer</button>
                 <button type="submit" class="btn btn-success">Save Changes</button>
             </div>
     </div>
@@ -72,9 +74,36 @@ else
         var status = await HttpLib.PutAsJsonAsync($"api/customer/{customer.Customerid}", customer);
         if(status.IsSuccessStatusCode)
         {
-            toasterService.ShowSuccess("Customer updated.");
+            await Swal.FireAsync("Success", "Customer has been saved!", "success");
         }
         else
-            toasterService.ShowError("Customer failed to update");
+            await Swal.FireAsync("Error", "Customer failed to update.", "error");
+    }
+
+    public async Task DeleteCustomer()
+    {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions
+        {
+            Title = "",
+            Text = "Are you sure you want to delete this customer?",
+            Icon = SweetAlertIcon.Warning,
+            ShowCancelButton = true,
+            ConfirmButtonText = "Yes",
+        });
+
+        if (!string.IsNullOrEmpty(result.Value))
+        {
+            // send up delete request
+
+            var status = await HttpLib.DeleteAsync($"api/customer/{customer.Customerid}");
+            
+            if (status.IsSuccessStatusCode)
+            {
+                await Swal.FireAsync("Delete", "Customer has been deleted.", SweetAlertIcon.Success);
+                navi.NavigateTo("/dashboard/customers");
+            }
+            else
+                await Swal.FireAsync("Error", "Customer could NOT be deleted", SweetAlertIcon.Error);
+        }
     }
 }

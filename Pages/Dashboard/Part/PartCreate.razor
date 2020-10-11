@@ -1,42 +1,42 @@
-﻿@page "/createEntry/Part"
+﻿@page "/dashboard/part/create"
 
 @using frontendapi_bikeshop.Models;
 @using System.Net.Http
 @inject HttpClient HttpLib
-@inject IToastService toasterService;
+@inject SweetAlertService Swal;
 
-<h3>CreateEntryComponent</h3>
+<h3>Create Component</h3>
 <EditForm Model=@component OnSubmit="OnSubmit">
     <div class="card mb-0">
         <div class="card-header">
-            Customer
+            Component
         </div>
         <div class="card-body">
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label>Manufacturer ID</label>
-                    <InputNumber @bind-Value="component.Manufacturerid" class="form-control" id="Manfacturerid" placeholder="6" required/>
+                    <InputNumber @bind-Value="component.Manufacturerid" class="form-control" id="Manfacturerid" placeholder="10" />
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label>Productint</label>
-                    <InputText @bind-Value="component.Productint" class="form-control" id="Productint" placeholder="Put in a id" />
+                    <InputText @bind-Value="component.Productint" class="form-control" id="Productint" placeholder="Put in a id" required />
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label>Road</label>
-                    <InputText @bind-Value="component.Road" class="form-control" id="Road" placeholder="something" />
+                    <InputText @bind-Value="component.Road" class="form-control" id="Road" placeholder="something" required />
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label>Category</label>
-                    <InputText @bind-Value="component.Category" class="form-control" id="Category" placeholder="Brakes" required />
+                    <InputText @bind-Value="component.Category" class="form-control" id="Category" placeholder="Cat el gor Eh" required />
                 </div>
             </div>
 
@@ -85,7 +85,7 @@
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label>Description</label>
-                    <InputText @bind-Value="component.Description" class="form-control" id="Productint" placeholder="This stops the bike" />
+                    <InputText @bind-Value="component.Description" class="form-control" id="Productint" placeholder="10" required />
                 </div>
             </div>
 
@@ -110,7 +110,7 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-success">Save Changes</button>
+            <button type="submit" class="btn btn-success">Create Component</button>
         </div>
 
 
@@ -121,13 +121,14 @@
     Component component = new Component();
     public async Task OnSubmit()
     {
-        var status = await HttpLib.PostAsJsonAsync($"api/Component", component);
+        var status = await HttpLib.PostAsJsonAsync($"api/component", component);
         if (status.IsSuccessStatusCode)
         {
-            toasterService.ShowSuccess("Component Added.");
+            await Swal.FireAsync("Success", "Component Created Successfully", SweetAlertIcon.Success);
         }
         else
-            toasterService.ShowError(status.ToString());
+            await Swal.FireAsync("Error", "Failed to create component", SweetAlertIcon.Error);  
+
     }
 }
 

@@ -1,0 +1,114 @@
+﻿@page "/dashboard/bicycles"
+@using System.Net.Http
+@inject HttpClient HttpLib
+@inject IJSRuntime JsRuntime;
+@inject NavigationManager NavigationManager
+
+<h1>Bicycles</h1>
+
+<a href="dashboard/customers/create">Create Bicycle</a>
+
+@if(BicycleList != null) {
+    <div class="card bg-light">
+    <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>ID</th>
+                <th>Type</th>
+                <th>Construction</th>
+                <th>Letter Style</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var bike in BicycleList) {
+                <tr>
+                    <td>@bike.Serialnumber</td>
+                    <td>@bike.Modeltype</td>
+                    <td>@bike.Construction</td>
+                    <td>@bike.Letterstyleid</td>
+                    <td>
+                        <div class="btn-group w-100">
+                            <button type="button" class="btn btn-outline-primary" @onclick="@( () => NavigationManager.NavigateTo("bicycles/view/" + @bike.Serialnumber) )">View</button>
+                            <button type="button" class="btn btn-outline-success" @onclick="@( () => NavigationManager.NavigateTo("bicyles/edit/" + @bike.Serialnumber) )">Edit</button>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="row justify-content-center">
+        <div class="col justify-content-center">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item @(pageNumber == 1 ? "disabled" : null)"><a class="page-link " href="#/" @onclick="@(async () => await PreviousPage())" @onclick:preventDefault>Previous</a></li>
+                    @for(int i = pageNumber - 2; i < pageNumber + 2; i++) {
+                        int buttonNumber = i;
+                        if(i < 1) continue;
+                        @if(i == pageNumber) {
+                            <li class="page-item active"><a class="page-link" href="#/" @onclick="@(async () => await ChoosePage(buttonNumber))" @onclick:preventDefault>@buttonNumber</a></li>
+                        } else {
+                            <li class="page-item @(BicycleList == null || i >= pageNumber && BicycleList.Count() < pageSize ? "disabled" : null)"><a class="page-link" href="#/" @onclick="@(async () => await ChoosePage(buttonNumber))" @onclick:preventDefault>@buttonNumber</a></li>
+                        }
+                    }
+                    <li class="page-item @(BicycleList== null || BicycleList.Count() < pageSize ? "disabled" : null)"><a class="page-link" href="#/" @onclick="@(async () => await NextPage())" @onclick:preventDefault>Next</a></li>
+                </ul>
+            </nav>
+
+        </div>
+    </div>
+    </div>
+
+
+} else {
+    <p>Loading Bicycles...</p>
+}
+
+
+@code {
+
+    private int pageSize = 10;
+    private int pageNumber = 1;
+    private Bicycle[] BicycleList;
+
+    private Bicycle B;
+
+    private Random random = new Random();
+
+    protected override async Task OnInitializedAsync() {
+        var bikeList = await HttpLib.GetFromJsonAsync<Bicycle[]>($"api/bicycles?pageNumber={pageNumber}&pageSize={pageSize}");
+
+        if(bikeList.Any()) {
+            BicycleList = bikeList;
+        }
+
+    }
+
+    private async Task<Bicycle[]> Paginate() {
+        return await HttpLib.GetFromJsonAsync<Bicycle[]>($"api/bicycles?pageNumber={pageNumber}&pageSize={pageSize}");
+    }
+
+    public async Task PreviousPage() {
+
+        pageNumber--;
+
+        if(pageNumber <= 0)
+            pageNumber = 1;
+
+        BicycleList = await Paginate();
+    }
+
+    public async Task NextPage() {
+        pageNumber++;
+
+        Math.Clamp(pageNumber, 1, 99);
+
+        BicycleList = await Paginate();
+    }
+
+    public async Task ChoosePage(int pageClick) {
+        pageNumber = pageClick;
+        BicycleList = await Paginate();
+    }
+
+}

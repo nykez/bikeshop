@@ -1,14 +1,15 @@
-﻿@page "/customers"
+﻿@page "/dashboard/parts"
 @using System.Net.Http
 @inject HttpClient HttpLib
 @inject IJSRuntime JsRuntime;
 @inject NavigationManager NavigationManager
 
-<h1>Customer</h1>
+<h1>Components</h1>
 
+<a href="dashboard/part/create">Create Components</a>
 
-@if(CustomerList != null) {
-    
+@if(ComponentList != null) {
+    <div class="card bg-light">
     <table class="table table-striped table-bordered">
         <thead class="thead-dark">
             <tr>
@@ -20,7 +21,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach(var cust in CustomerList) {
+            @foreach(var cust in ComponentList) {
                 <tr>
                     <td>@cust.Customerid</td>
                     <td>@cust.Firstname @cust.Lastname</td>
@@ -44,46 +45,48 @@
         <div class="col justify-content-center">
             <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-center">
-                    <li class="page-item"><a class="page-link" href="#/" @onclick="@(async () => await PreviousPage())" @onclick:preventDefault>Previous</a></li>
-                    @for(int i = pageNumber-2; i < pageNumber + 2; i++) {
+                    <li class="page-item @(pageNumber == 1 ? "disabled" : null)"><a class="page-link " href="#/" @onclick="@(async () => await PreviousPage())" @onclick:preventDefault>Previous</a></li>
+                    @for(int i = pageNumber - 2; i < pageNumber + 2; i++) {
                         int buttonNumber = i;
                         if(i < 1) continue;
-                        <li class="page-item"><a class="page-link" href="#/" @onclick="@(async () => await ChoosePage(buttonNumber))" @onclick:preventDefault>@buttonNumber</a></li>
+                        @if(i == pageNumber) {
+                            <li class="page-item active"><a class="page-link" href="#/" @onclick="@(async () => await ChoosePage(buttonNumber))" @onclick:preventDefault>@buttonNumber</a></li>
+                        } else {
+                            <li class="page-item @(ComponentList == null || i >= pageNumber && ComponentList.Count() < pageSize ? "disabled" : null)"><a class="page-link" href="#/" @onclick="@(async () => await ChoosePage(buttonNumber))" @onclick:preventDefault>@buttonNumber</a></li>
+                        }
                     }
-                    <li class="page-item"><a class="page-link" href="#/" @onclick="@(async () => await NextPage())" @onclick:preventDefault>Next</a></li>
+                    <li class="page-item @(ComponentList == null || ComponentList.Count() < pageSize ? "disabled" : null)"><a class="page-link" href="#/" @onclick="@(async () => await NextPage())" @onclick:preventDefault>Next</a></li>
                 </ul>
             </nav>
 
         </div>
     </div>
-
+    </div>
 
 
 } else {
-    <p>Loading Customers...</p>
+    <p>Loading Components...</p>
 }
 
 
 
-@if(Customer != null) {
-    <p>@Customer.Firstname @Customer.Lastname - @Customer.Address (Balance: $@Customer.Balancedue)</p>
-}
+
 
 @code {
 
     private int pageSize = 10;
     private int pageNumber = 1;
-    private Customer[] CustomerList;
+    private Customer[] ComponentList;
 
-    private Customer Customer;
+    private Customer Component;
 
     private Random random = new Random();
 
     protected override async Task OnInitializedAsync() {
-        var customerList = await HttpLib.GetFromJsonAsync<Customer[]>($"api/customer?pageNumber={pageNumber}&pageSize={pageSize}");
+        var componentList = await HttpLib.GetFromJsonAsync<Customer[]>($"api/component?pageNumber={pageNumber}&pageSize={pageSize}");
 
-        if(customerList.Any()) {
-            CustomerList = customerList;
+        if(componentList.Any()) {
+            ComponentList = componentList;
         }
 
     }
@@ -93,7 +96,7 @@
     }
 
     public async Task RandomCustomer() {
-        Customer = await HttpLib.GetFromJsonAsync<Customer>("api/customer/" + random.Next(1, 5000).ToString());
+        Component = await HttpLib.GetFromJsonAsync<Customer>("api/customer/" + random.Next(1, 5000).ToString());
     }
 
     public async Task PreviousPage() {
@@ -103,7 +106,7 @@
         if(pageNumber <= 0)
             pageNumber = 1;
 
-        CustomerList = await Paginate();
+        ComponentList = await Paginate();
     }
 
     public async Task NextPage() {
@@ -111,12 +114,12 @@
 
         Math.Clamp(pageNumber, 1, 99);
 
-        CustomerList = await Paginate();
+        ComponentList = await Paginate();
     }
 
     public async Task ChoosePage(int pageClick) {
         pageNumber = pageClick;
-        CustomerList = await Paginate();
+        ComponentList = await Paginate();
     }
 
 }

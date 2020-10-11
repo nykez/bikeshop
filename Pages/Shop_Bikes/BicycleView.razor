@@ -1,9 +1,9 @@
-﻿@page "/parts"
+﻿@page "/bicycles"
 @using System.Net.Http
 @using System.Collections.Generic
 @using System.Diagnostics;
 @inject HttpClient HttpLib
-@inject IToastService toasterService;
+@inject SweetAlertService Swal;
 @inject IJSRuntime JSRuntime;
 
 <div class="row row-height" style="max-height: 90%;">
@@ -11,7 +11,7 @@
         <h4>Filters</h4>
         <div class="card mb-1">
             <div class="card-header">
-                Category
+                Model Type
             </div>
             <div class="card-body">
                 @foreach(var item in filter_modelTypes) {
@@ -28,7 +28,7 @@
 
         <div class="card mb-1">
             <div class="card-header">
-                Road Type
+                Construction
             </div>
             <div class="card-body">
                 @foreach(var item in filter_construction) {
@@ -42,6 +42,21 @@
             </div>
         </div>
 
+        <div class="card mb-1">
+            <div class="card-header">
+                Color
+            </div>
+            <div class="card-body">
+                @foreach(var item in all_Colorlists) {
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="colorlist" id="item" value="@item" @onchange="eventArgs => { ColorlistClicked(item, eventArgs.Value); }">
+                        <label class="form-check-label" for="construction-type">
+                            @item[0]@item.Substring(1).ToLower()
+                        </label>
+                    </div>
+                }
+            </div>
+        </div>
 
         <div class="card mb-1">
             <div class="card-header">
@@ -51,16 +66,16 @@
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label>Min</label>
-                        <input type="number" class="form-control" id="priceMin" placeholder="$0">
+                        <input type="number" class="form-control" id="priceMin" placeholder="$0" @bind="@min">
                     </div>
 
                     <div class="form-group col-md-6 text-right">
                         <label>Max</label>
-                        <input type="number" class="form-control" id="priceMax" placeholder="$1,000">
+                        <input type="number" class="form-control" id="priceMax" placeholder="$1,000" @bind="@max">
                     </div>
                 </div>
 
-                <button class='btn btn-outline-success w-100'>Save Changes</button>
+                <button type="button" class='btn btn-outline-success w-100' @onclick="ApplyChanges">Save Changes</button>
 
             </div>
         </div>
@@ -71,20 +86,20 @@
     </div>
     <div class="col-9 left card card-body bg-light" style="max-height: 90%">
 
-        @if(components == null) {
-            <p>Loading parts...</p>
+        @if(bicycles == null) {
+            <p>Loading bicycles...</p>
         } else {
             <div class="card-deck">
-                @foreach(var part in components) {
+                @foreach(var bike in bicycles) {
                     <div class="card m-1" style="min-width: 18rem; max-width:33.0%;">
                         <div class="card-header">
-                            <h5 class="card-title">@part.Productint<span class="badge badge-pill badge-primary float-right">$@part.Listprice</span></h5>
+                            <h5 class="card-title">@bike.Modeltype<span class="badge badge-pill badge-primary float-right">$@bike.Listprice</span></h5>
                         </div>
                         <div class="card-body">
-                            <h6><span class="badge badge-pill badge-secondary">@part.Category</span> <span class="badge badge-pill badge-secondary">@((part?.Road ?? "N/A"))</span> <span class="badge badge-pill badge-secondary">LENGTH @(part.Length == 0 ? "N/A" : @part.Length.ToString())</span></h6>
-                            <p class="card-text">@part.Description</p>
+                            <h6><span class="badge badge-pill badge-secondary">@bike.Construction</span> <span class="badge badge-pill badge-secondary" style="background-color: @((bike?.Paint?.Colorlist ?? "NONE"))">@((bike?.Paint?.Colorlist ?? "N/A"))</span> <span class="badge badge-pill badge-secondary">@bike.Framesize FRAMESIZE</span></h6>
+                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
                             <a href="#" class="btn btn-outline-primary">View</a>
-                            <a href="#" class="btn btn-outline-success" @onclick:preventDefault @onclick='(() => toasterService.ShowError("You must be logged in to this."))'>Add To Cart</a>
+                            <a href="#" class="btn btn-outline-success" @onclick:preventDefault @onclick='(() => Swal.FireAsync("","You must be logged in to do this.", SweetAlertIcon.Warning))'>Add To Cart</a>
                         </div>
                     </div>
                 }
@@ -102,10 +117,10 @@
                             @if(i == pageNumber) {
                                 <li class="page-item active"><a class="page-link" href="#/" @onclick="@(async () => await ChoosePage(buttonNumber))" @onclick:preventDefault>@buttonNumber</a></li>
                             } else {
-                                <li class="page-item"><a class="page-link" href="#/" @onclick="@(async () => await ChoosePage(buttonNumber))" @onclick:preventDefault>@buttonNumber</a></li>
+                                <li class="page-item @(bicycles == null || i >= pageNumber && bicycles.Count() < pageSize ? "disabled" : null)"><a class="page-link" href="#/" @onclick="@(async () => await ChoosePage(buttonNumber))" @onclick:preventDefault>@buttonNumber</a></li>
                             }
                         }
-                        <li class="page-item"><a class="page-link" href="#/" @onclick="@(async () => await NextPage())" @onclick:preventDefault>Next</a></li>
+                        <li class="page-item @(bicycles == null || bicycles.Count() < pageSize ? "disabled" : null)"><a class="page-link" href="#/" @onclick="@(async () => await NextPage())" @onclick:preventDefault>Next</a></li>
                     </ul>
                 </nav>
 
@@ -121,38 +136,59 @@
 
 @code {
 
-    Component[] components;
-
+    Bicycle[] bicycles;
+    List<String> filter_Colorlists = new List<String>();
+    List<String> all_Colorlists = new List<String>();
     List<String> filter_ModelTypes = new List<String>();
     List<String> filter_Constructions = new List<String>();
+    double min;
+    double max;
     private int pageSize = 20;
     private int pageNumber = 1;
-    public List<String> filter_modelTypes = new List<string>() { "Frame", "Headset", "Front deraileur", "Rear deraileur", "Brakes", "Crank", "Handlebar", "Chain"};
-    public List<String> filter_construction = new List<string>() { "MTB", "Road" };
+    public List<String> filter_modelTypes = new List<string>() { "Hybrid", "Mountain", "Race", "Road", "Tour", "Track" };
+    public List<String> filter_construction = new List<string>() { "Tig Welded", "Welded", "Bonded" };
 
     protected override async Task OnInitializedAsync() {
 
-        var bicycleList = await HttpLib.GetFromJsonAsync<Component[]>($"api/component?pageNumber={pageNumber}&pageSize={pageSize}");
-
+        var bicycleList = await HttpLib.GetFromJsonAsync<Bicycle[]>($"api/bicycles?pageNumber={pageNumber}&pageSize={pageSize}");
+        var colorlists = await GetColorlists();
         if(bicycleList.Any()) {
-            components = bicycleList;
+            bicycles = bicycleList;
         }
-
-
+        if(colorlists.Any()) {
+            @*foreach(String colorlist in colorlists) {
+                filter_colorLists.Add(colorlist);
+            }*@
+        all_Colorlists = new List<String>(colorlists);
+        }
     }
 
-    private async Task<Component[]> Paginate() {
-        var apiRoute = $"api/component?pageNumber={pageNumber}&pageSize={pageSize}";
+
+
+    private async Task<List<String>> GetColorlists() {
+        var apiRoute = $"api/paints/list";
+        return await HttpLib.GetFromJsonAsync<List<String>>(apiRoute);
+    }
+
+
+    private async Task<Bicycle[]> Paginate() {
+        var apiRoute = $"api/bicycles?pageNumber={pageNumber}&pageSize={pageSize}";
 
         if(filter_Constructions.Count > 0) {
-            apiRoute = QueryHelpers.AddQueryString(apiRoute, "road", BuildQueryString(filter_Constructions));
+            apiRoute = QueryHelpers.AddQueryString(apiRoute, "construction", BuildQueryString(filter_Constructions));
         }
 
         if(filter_ModelTypes.Count > 0) {
-            apiRoute = QueryHelpers.AddQueryString(apiRoute, "category", BuildQueryString(filter_ModelTypes));
+            apiRoute = QueryHelpers.AddQueryString(apiRoute, "modeltype", BuildQueryString(filter_ModelTypes));
         }
 
-        return await HttpLib.GetFromJsonAsync<Component[]>(apiRoute);
+        if(filter_Colorlists.Count > 0) {
+            apiRoute = QueryHelpers.AddQueryString(apiRoute, "paint", BuildQueryString(filter_Colorlists));
+        }
+        if(QueryPrices(min, max, out String priceQuery) && priceQuery != "") {
+            apiRoute += $"&{priceQuery}";
+        }
+        return await HttpLib.GetFromJsonAsync<Bicycle[]>(apiRoute);
     }
 
     public async Task PreviousPage() {
@@ -162,7 +198,7 @@
         if(pageNumber <= 0)
             pageNumber = 1;
 
-        components = await Paginate();
+        bicycles = await Paginate();
     }
 
     public async Task NextPage() {
@@ -170,17 +206,17 @@
 
         Math.Clamp(pageNumber, 1, 99);
 
-        components = await Paginate();
+        bicycles = await Paginate();
     }
 
     public async Task ChoosePage(int pageClick) {
         pageNumber = pageClick;
-        components = await Paginate();
+        bicycles = await Paginate();
     }
 
     public async Task ApplyChanges() {
         pageNumber = 1;
-        components = await Paginate();
+        bicycles = await Paginate();
     }
 
     public async Task ClearFilters() {
@@ -192,7 +228,7 @@
         pageNumber = 1;
         pageSize = 15;
         StateHasChanged();
-        components = await Paginate();
+        bicycles = await Paginate();
     }
 
 
@@ -223,6 +259,28 @@
         }
     }
 
+    void ColorlistClicked(String colorList, object checkedColorlist) {
+        if((bool)checkedColorlist) {
+            if(!filter_Colorlists.Contains(colorList)) {
+                filter_Colorlists.Add(colorList);
+            }
+        } else {
+            if(filter_Colorlists.Contains(colorList)) {
+                filter_Colorlists.Remove(colorList);
+            }
+        }
+    }
+
+    bool QueryPrices(double min, double max, out String qString) {
+        qString = "";
+
+        if(min > max && max != 0) return false;
+        if(min != 0) qString += $"listprice>{min}";
+        if(min != 0 && max != 0) qString += $"&";
+        if(max != 0) qString += $"listprice<{max}";
+        return true;
+    }
+
     String BuildQueryString(List<String> filterList) {
         String qString = "";
         if(filterList.Count == 1) {
@@ -233,7 +291,6 @@
                 qString += $"|{filterList[i]}";
             }
         }
-        Console.WriteLine(qString);
         return qString;
     }
 
