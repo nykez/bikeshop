@@ -1,16 +1,29 @@
-﻿@page "/createEntry/Customer"
+﻿@page "/dashboard/customer/create"
 @using frontendapi_bikeshop.Models;
 @using System.Net.Http
 @inject HttpClient HttpLib
 @inject IToastService toasterService;
 
-<h3>CreateEntryCustomer</h3>
-<EditForm Model=@customer OnSubmit="OnSubmit">
+<div class="container mt-3">
+<h3>Create Customer</h3>
+<EditForm Model=@customer OnSubmit="OnSubmit" class ="card card-body bg-light">
 <div class="card mb-0">
     <div class="card-header">
         Customer
     </div>
-    <div class="card-body">
+    <div class="card-body ">
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label>First Name</label>
+                <InputText @bind-Value="customer.Firstname" class="form-control" id="FirstName" placeholder="John" required />
+            </div>
+
+            <div class="form-group col-md-6">
+                <label>Last Name</label>
+                <InputText @bind-Value="customer.Lastname" class="form-control" id="LastName" placeholder="Doe" required />
+            </div>
+        </div>
+
         <div class="form-row">
             <div class="form-group col-md-6">
                 <label >Phone</label>
@@ -19,25 +32,14 @@
         </div>
         <div class="form-row">
             <div class="form-group col-md-6">
-                <label>First Name</label>
-                <InputText @bind-Value="customer.Firstname" class="form-control" id="FirstName" placeholder="first" required />
-            </div>
-
-            <div class="form-group col-md-6">
-                <label>Last Name</label>
-                <InputText @bind-Value="customer.Lastname" class="form-control" id="LastName" placeholder="last" required />
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-md-6">
                 <label>Address</label>
-                <InputText @bind-Value="customer.Address" class="form-control" id="Address" placeholder="123 Place Street" required />
+                <InputText @bind-Value="customer.Address" class="form-control" id="Address" placeholder="451 Main Street" required />
             </div>
         </div>
         <div class="form-row">
             <div class="form-group col-md-6">
                 <label>Zip Code</label>
-                <InputText @bind-Value="customer.Zipcode" class="form-control" id="ZipCode" placeholder="12345" required />
+                <InputText @bind-Value="customer.Zipcode" class="form-control" id="ZipCode" placeholder="99912" required />
             </div>
 
             <div class="form-group col-md-6">
@@ -49,16 +51,17 @@
         <div class="form-row">
             <div class="form-group col-md-6">
                 <label>Balance Due</label>
-                <InputNumber @bind-Value="customer.Balancedue" class="form-control" id="Balancedue" placeholder="10" />
+                <InputNumber @bind-Value="customer.Balancedue" class="form-control" id="Balancedue" placeholder="0" />
             </div>
         </div>
 
-        <button type="submit" class="btn btn-success">Save Changes</button>
+        <button type="submit" class="btn btn-outline-success">Create Customer</button>
     </div>
 
 
 </div>
 </EditForm>
+</div>
 
 @code {
     Customer customer = new Customer();
