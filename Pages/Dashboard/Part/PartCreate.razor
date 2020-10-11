@@ -15,28 +15,28 @@
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label>Manufacturer ID</label>
-                    <InputNumber @bind-Value="component.Manufacturerid" class="form-control" id="Manfacturerid" placeholder="10" />
+                    <InputNumber @bind-Value="component.Manufacturerid" class="form-control" id="Manfacturerid" placeholder="6" required />
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label>Productint</label>
-                    <InputText @bind-Value="component.Productint" class="form-control" id="Productint" placeholder="Put in a id" required />
+                    <InputText @bind-Value="component.Productint" class="form-control" id="Productint" placeholder="Put in a id" />
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label>Road</label>
-                    <InputText @bind-Value="component.Road" class="form-control" id="Road" placeholder="something" required />
+                    <InputText @bind-Value="component.Road" class="form-control" id="Road" placeholder="something" />
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label>Category</label>
-                    <InputText @bind-Value="component.Category" class="form-control" id="Category" placeholder="Cat el gor Eh" required />
+                    <InputText @bind-Value="component.Category" class="form-control" id="Category" placeholder="Brakes" required />
                 </div>
             </div>
 
@@ -85,7 +85,7 @@
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label>Description</label>
-                    <InputText @bind-Value="component.Description" class="form-control" id="Productint" placeholder="10" required />
+                    <InputText @bind-Value="component.Description" class="form-control" id="Productint" placeholder="10" />
                 </div>
             </div>
 
@@ -121,13 +121,25 @@
     Component component = new Component();
     public async Task OnSubmit()
     {
-        var status = await HttpLib.PostAsJsonAsync($"api/component", component);
-        if (status.IsSuccessStatusCode)
+
+
+        try
         {
-            await Swal.FireAsync("Success", "Component Created Successfully", SweetAlertIcon.Success);
+            var status = await HttpLib.PostAsJsonAsync($"api/component", component);
+            if (status.IsSuccessStatusCode)
+            {
+                await Swal.FireAsync("Success", "Component Created Successfully", SweetAlertIcon.Success);
+            }
+            else
+                await Swal.FireAsync("Error", "Failed to create component", SweetAlertIcon.Error);
         }
-        else
-            await Swal.FireAsync("Error", "Failed to create component", SweetAlertIcon.Error);  
+        catch (Exception ex)
+        {
+            await Swal.FireAsync("Error", "Failed to create component", SweetAlertIcon.Error);
+
+        }
+
+
 
     }
 }
