@@ -122,7 +122,6 @@
     public async Task OnSubmit()
     {
 
-
         try
         {
             var status = await HttpLib.PostAsJsonAsync($"api/component", component);
@@ -133,7 +132,7 @@
             else
                 await Swal.FireAsync("Error", "Failed to create component", SweetAlertIcon.Error);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             await Swal.FireAsync("Error", "Failed to create component", SweetAlertIcon.Error);
 
