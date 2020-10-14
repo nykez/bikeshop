@@ -28,9 +28,11 @@
                     <td>@bike.Construction</td>
                     <td>@bike.Letterstyleid</td>
                     <td>
+                        
+                        
                         <div class="btn-group w-100">
                             <button type="button" class="btn btn-outline-primary" @onclick="@( () => NavigationManager.NavigateTo("bicycles/view/" + @bike.Serialnumber) )">View</button>
-                            <button type="button" class="btn btn-outline-success" @onclick="@( () => NavigationManager.NavigateTo("bicyles/edit/" + @bike.Serialnumber) )">Edit</button>
+                            <button type="button" class="btn btn-outline-success" @onclick="@( () => NavigationManager.NavigateTo("bicycles/edit/" + @bike.Serialnumber) )">Edit</button>
                         </div>
                     </td>
                 </tr>
