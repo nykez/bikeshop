@@ -10,121 +10,82 @@
 @if(component == null) {
     <p>Loading Bicycle details...</p>
 } else {
-    <EditForm Model=@component OnSubmit="OnSubmit">
-        <div class="card mb-0">
-            <div class="card-header">
-                Component
-            </div>
-            <div class="card-body">
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label>Manufacturer ID</label>
-                        <InputNumber @bind-Value="component.Manufacturerid" class="form-control" id="Manfacturerid" placeholder="6" required />
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label>Productint</label>
-                        <InputText @bind-Value="component.Productint" class="form-control" id="Productint" placeholder="Put in a id" />
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label>Road</label>
-                        <InputText @bind-Value="component.Road" class="form-control" id="Road" placeholder="something" />
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label>Category</label>
-                        <InputText @bind-Value="component.Category" class="form-control" id="Category" placeholder="Brakes" required />
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label>Length</label>
-                        <InputNumber @bind-Value="component.Length" class="form-control" id="Length" placeholder="10" />
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label>Height</label>
-                        <InputNumber @bind-Value="component.Height" class="form-control" id="Height" placeholder="10" />
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label>Width</label>
-                        <InputNumber @bind-Value="component.Width" class="form-control" id="Width" placeholder="10" />
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label>Weight</label>
-                        <InputNumber @bind-Value="component.Weight" class="form-control" id="Weight" placeholder="10" />
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label>Year</label>
-                        <InputNumber @bind-Value="component.Year" class="form-control" id="Year" placeholder="2020" />
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label>End Year</label>
-                        <InputNumber @bind-Value="component.Endyear" class="form-control" id="EndYear" placeholder="2021" />
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label>Description</label>
-                        <InputText @bind-Value="component.Description" class="form-control" id="Productint" placeholder="10" />
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label>List Price</label>
-                        <InputNumber @bind-Value="component.Listprice" class="form-control" id="Listprice" placeholder="100.00" />
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label>Estimated Cost</label>
-                        <InputNumber @bind-Value="component.Estimatedcost" class="form-control" id="Estimatedcost" placeholder="10.00" />
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label>Quantity on hand</label>
-                        <InputNumber @bind-Value="component.Quantityonhand" class="form-control" id="Quantityonhand" placeholder="11" />
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-12 text-right">
-                        <button type="button" class="btn btn-danger" @onclick="DeleteComponent">Delete Component</button>
-                        <button type="submit" class="btn btn-success">Save Changes</button>
-                    </div>
-                </div>
-            </div>
-
-
+<EditForm Model=@component OnSubmit="OnSubmit">
+    <div class="card mb-0">
+        <div class="card-header">
+            Component
         </div>
-    </EditForm>
+        <div class="card-body">
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>Manufacturer ID</label>
+                    <InputNumber @bind-Value="component.Manufacturerid" class="form-control" id="Manfacturerid" placeholder="6" required />
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Productint</label>
+                    <InputText @bind-Value="component.Productint" class="form-control" id="Productint" placeholder="Put in a id" />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>Road</label>
+                    <InputText @bind-Value="component.Road" class="form-control" id="Road" placeholder="something" />
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Category</label>
+                    <InputText @bind-Value="component.Category" class="form-control" id="Category" placeholder="Brakes" required />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>Length</label>
+                    <InputNumber @bind-Value="component.Length" class="form-control" id="Length" placeholder="10" />
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Height</label>
+                    <InputNumber @bind-Value="component.Height" class="form-control" id="Height" placeholder="10" />
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Width</label>
+                    <InputNumber @bind-Value="component.Width" class="form-control" id="Width" placeholder="10" />
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Weight</label>
+                    <InputNumber @bind-Value="component.Weight" class="form-control" id="Weight" placeholder="10" />
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Description</label>
+                    <InputText @bind-Value="component.Description" class="form-control" id="Productint" placeholder="10" />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>Year</label>
+                    <InputNumber @bind-Value="component.Year" class="form-control" id="Year" placeholder="2020" />
+                </div>
+                <div class="form-group col-md-6">
+                    <label>End Year</label>
+                    <InputNumber @bind-Value="component.Endyear" class="form-control" id="EndYear" placeholder="2021" />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>List Price</label>
+                    <InputNumber @bind-Value="component.Listprice" class="form-control" id="Listprice" placeholder="100.00" />
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Estimated Cost</label>
+                    <InputNumber @bind-Value="component.Estimatedcost" class="form-control" id="Estimatedcost" placeholder="10.00" />
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Quantity on hand</label>
+                    <InputNumber @bind-Value="component.Quantityonhand" class="form-control" id="Quantityonhand" placeholder="11" />
+                </div>
+            </div>
+            <button type="submit" class="btn btn-success">Create Component</button>
+        </div>
+    </div>
+</EditForm>
 }
 @code {
     [Parameter]
