@@ -49,7 +49,7 @@
                 Color
                 <a href="" @onclick:preventDefault ><span class="oi oi-plus float-right" aria-hidden="true"></span></a>
             </div>
-            <div class="card-bodyr">
+            <div class="card-body">
                 @foreach(var item in all_Colorlists) {
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="colorlist" id="item" value="@item" @onchange="eventArgs => { ColorlistClicked(item, eventArgs.Value); }">
@@ -70,17 +70,14 @@
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label>Min</label>
-                        <input type="number" class="form-control" id="priceMin" placeholder="$0" @bind="@min">
+                        <input type="number" class="form-control price-box" id="priceMin" placeholder="$0" @bind="@min">
                     </div>
 
                     <div class="form-group col-md-6 text-right">
                         <label>Max</label>
-                        <input type="number" class="form-control" id="priceMax" placeholder="$1,000" @bind="@max">
+                        <input type="number" class="form-control price-box" id="priceMax" placeholder="$1,000" @bind="@max">
                     </div>
                 </div>
-
-                <button type="button" class='btn btn-outline-success w-100' @onclick="ApplyChanges">Save Changes</button>
-
             </div>
         </div>
 
@@ -170,138 +167,139 @@
                 filter_colorLists.Add(colorlist);
             }*@
         all_Colorlists = new List<String>(colorlists);
-        }
+    }
+}
+
+
+
+private async Task<List<String>> GetColorlists() {
+    var apiRoute = $"api/paints/list";
+    return await HttpLib.GetFromJsonAsync<List<String>>(apiRoute);
+}
+
+
+private async Task<Bicycle[]> Paginate() {
+    var apiRoute = $"api/bicycles?pageNumber={pageNumber}&pageSize={pageSize}";
+
+    if(filter_Constructions.Count > 0) {
+        apiRoute = QueryHelpers.AddQueryString(apiRoute, "construction", BuildQueryString(filter_Constructions));
     }
 
-
-
-    private async Task<List<String>> GetColorlists() {
-        var apiRoute = $"api/paints/list";
-        return await HttpLib.GetFromJsonAsync<List<String>>(apiRoute);
+    if(filter_ModelTypes.Count > 0) {
+        apiRoute = QueryHelpers.AddQueryString(apiRoute, "modeltype", BuildQueryString(filter_ModelTypes));
     }
 
-
-    private async Task<Bicycle[]> Paginate() {
-        var apiRoute = $"api/bicycles?pageNumber={pageNumber}&pageSize={pageSize}";
-
-        if(filter_Constructions.Count > 0) {
-            apiRoute = QueryHelpers.AddQueryString(apiRoute, "construction", BuildQueryString(filter_Constructions));
-        }
-
-        if(filter_ModelTypes.Count > 0) {
-            apiRoute = QueryHelpers.AddQueryString(apiRoute, "modeltype", BuildQueryString(filter_ModelTypes));
-        }
-
-        if(filter_Colorlists.Count > 0) {
-            apiRoute = QueryHelpers.AddQueryString(apiRoute, "paint", BuildQueryString(filter_Colorlists));
-        }
-        if(QueryPrices(min, max, out String priceQuery) && priceQuery != "") {
-            apiRoute += $"&{priceQuery}";
-        }
-        return await HttpLib.GetFromJsonAsync<Bicycle[]>(apiRoute);
+    if(filter_Colorlists.Count > 0) {
+        apiRoute = QueryHelpers.AddQueryString(apiRoute, "paint", BuildQueryString(filter_Colorlists));
     }
-
-    public async Task PreviousPage() {
-
-        pageNumber--;
-
-        if(pageNumber <= 0)
-            pageNumber = 1;
-
-        bicycles = await Paginate();
+    if(QueryPrices(min, max, out String priceQuery) && priceQuery != "") {
+        apiRoute += $"&{priceQuery}";
     }
+    return await HttpLib.GetFromJsonAsync<Bicycle[]>(apiRoute);
+}
 
-    public async Task NextPage() {
-        pageNumber++;
+public async Task PreviousPage() {
 
-        Math.Clamp(pageNumber, 1, 99);
+    pageNumber--;
 
-        bicycles = await Paginate();
-    }
-
-    public async Task ChoosePage(int pageClick) {
-        pageNumber = pageClick;
-        bicycles = await Paginate();
-    }
-
-    public async Task ApplyChanges() {
+    if(pageNumber <= 0)
         pageNumber = 1;
-        bicycles = await Paginate();
-    }
 
-    public async Task ClearFilters() {
-        await JSRuntime.InvokeVoidAsync("uncheckBoxes");
+    bicycles = await Paginate();
+}
 
-        filter_Constructions.Clear();
-        filter_ModelTypes.Clear();
+public async Task NextPage() {
+    pageNumber++;
 
-        pageNumber = 1;
-        pageSize = 15;
-        StateHasChanged();
-        bicycles = await Paginate();
-    }
+    Math.Clamp(pageNumber, 1, 99);
+
+    bicycles = await Paginate();
+}
+
+public async Task ChoosePage(int pageClick) {
+    pageNumber = pageClick;
+    bicycles = await Paginate();
+}
+
+public async Task ApplyChanges() {
+    pageNumber = 1;
+    bicycles = await Paginate();
+}
+
+public async Task ClearFilters() {
+    await JSRuntime.InvokeVoidAsync("uncheckBoxes");
+    await JSRuntime.InvokeVoidAsync("clearPriceValues");
+    filter_Constructions.Clear();
+    filter_ModelTypes.Clear();
+    min = 0;
+    max = 0;
+    pageNumber = 1;
+    pageSize = 15;
+    StateHasChanged();
+    bicycles = await Paginate();
+}
 
 
-    ///checkbox handlers
+///checkbox handlers
 
-    void ModelClicked(String modelType, object checkedModel) {
+void ModelClicked(String modelType, object checkedModel) {
 
-        if((bool)checkedModel) {
-            if(!filter_ModelTypes.Contains(modelType)) {
-                filter_ModelTypes.Add(modelType);
-            }
-        } else {
-            if(filter_ModelTypes.Contains(modelType)) {
-                filter_ModelTypes.Remove(modelType);
-            }
+    if((bool)checkedModel) {
+        if(!filter_ModelTypes.Contains(modelType)) {
+            filter_ModelTypes.Add(modelType);
+        }
+    } else {
+        if(filter_ModelTypes.Contains(modelType)) {
+            filter_ModelTypes.Remove(modelType);
         }
     }
+}
 
-    void ConstructionClicked(String constructionType, object checkedConstruction) {
-        if((bool)checkedConstruction) {
-            if(!filter_Constructions.Contains(constructionType)) {
-                filter_Constructions.Add(constructionType);
-            }
-        } else {
-            if(filter_Constructions.Contains(constructionType)) {
-                filter_Constructions.Remove(constructionType);
-            }
+void ConstructionClicked(String constructionType, object checkedConstruction) {
+    if((bool)checkedConstruction) {
+        if(!filter_Constructions.Contains(constructionType)) {
+            filter_Constructions.Add(constructionType);
+        }
+    } else {
+        if(filter_Constructions.Contains(constructionType)) {
+            filter_Constructions.Remove(constructionType);
         }
     }
+}
 
-    void ColorlistClicked(String colorList, object checkedColorlist) {
-        if((bool)checkedColorlist) {
-            if(!filter_Colorlists.Contains(colorList)) {
-                filter_Colorlists.Add(colorList);
-            }
-        } else {
-            if(filter_Colorlists.Contains(colorList)) {
-                filter_Colorlists.Remove(colorList);
-            }
+void ColorlistClicked(String colorList, object checkedColorlist) {
+    if((bool)checkedColorlist) {
+        if(!filter_Colorlists.Contains(colorList)) {
+            filter_Colorlists.Add(colorList);
+        }
+    } else {
+        if(filter_Colorlists.Contains(colorList)) {
+            filter_Colorlists.Remove(colorList);
         }
     }
+}
 
-    bool QueryPrices(double min, double max, out String qString) {
-        qString = "";
+bool QueryPrices(double min, double max, out String qString) {
+    qString = "";
 
-        if(min > max && max != 0) return false;
-        if(min != 0) qString += $"listprice>{min}";
-        if(min != 0 && max != 0) qString += $"&";
-        if(max != 0) qString += $"listprice<{max}";
-        return true;
-    }
+    if(min > max && max != 0) return false;
+    if(min != 0) qString += $"listprice>{min}";
+    if(min != 0 && max != 0) qString += $"&";
+    if(max != 0) qString += $"listprice<{max}";
+    return true;
+}
 
-    String BuildQueryString(List<String> filterList) {
-        String qString = "";
-        if(filterList.Count == 1) {
-            qString = $"{filterList[0]}";
-        } else {
-            qString = $"{filterList[0]}";
-            for(int i = 1; i < filterList.Count; i++) {
-                qString += $"|{filterList[i]}";
-            }
+String BuildQueryString(List<String> filterList) {
+    String qString = "";
+    if(filterList.Count == 1) {
+        qString = $"{filterList[0]}";
+    } else {
+        qString = $"{filterList[0]}";
+        for(int i = 1; i < filterList.Count; i++) {
+            qString += $"|{filterList[i]}";
         }
-        return qString;
     }
+    return qString;
+}
 
 }
