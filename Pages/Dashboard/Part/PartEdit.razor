@@ -82,7 +82,12 @@
                     <InputNumber @bind-Value="component.Quantityonhand" class="form-control" id="Quantityonhand" placeholder="11" />
                 </div>
             </div>
-            <button type="submit" class="btn btn-success">Create Component</button>
+            <div class="row">
+                <div class="col-md-12 text-right">
+                    <button type="button" class="btn btn-danger" @onclick="DeleteComponent">Delete Component</button>
+                    <button type="submit" class="btn btn-success">Save Changes</button>
+                </div>
+            </div>
         </div>
     </div>
 </EditForm>
