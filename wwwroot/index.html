@@ -40,4 +40,10 @@
             checkBoxes[i].checked = false;
         }
     }
+    function clearPriceValues() {
+        priceBoxes = document.getElementsByClassName("price-box");
+        for (i = 0; i < priceBoxes.length; i++) {
+            priceBoxes[i].value = 0;
+        }
+    }
 </script>
