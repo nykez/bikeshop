@@ -21,16 +21,16 @@
             </tr>
         </thead>
         <tbody>
-            @foreach(var cust in ComponentList) {
+            @foreach(var component in ComponentList) {
                 <tr>
-                    <td>@cust.Componentid</td>
-                    <td>@cust.Productint</td>
-                    <td>@cust.Category</td>
-                    <td>@cust.Quantityonhand</td>
+                    <td>@component.Componentid</td>
+                    <td>@component.Productint</td>
+                    <td>@component.Category</td>
+                    <td>@component.Quantityonhand</td>
                     <td>
                         <div class="btn-group w-100">
-                            <button type="button" class="btn btn-outline-primary" @onclick="@( () => NavigationManager.NavigateTo("customers/view/" + @cust.Componentid) )">View</button>
-                            <button type="button" class="btn btn-outline-success" @onclick="@( () => NavigationManager.NavigateTo("customers/edit/" + @cust.Componentid) )">Edit</button>
+                            <button type="button" class="btn btn-outline-primary" @onclick="@( () => NavigationManager.NavigateTo("component/view/" + @component.Componentid) )">View</button>
+                            <button type="button" class="btn btn-outline-success" @onclick="@( () => NavigationManager.NavigateTo("component/edit/" + @component.Componentid) )">Edit</button>
                         </div>
                     </td>
                 </tr>
