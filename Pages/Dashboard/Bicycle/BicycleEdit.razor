@@ -10,95 +10,148 @@
     <p>Loading Bicycle details...</p>
 } else {
 <EditForm Model=bicycle OnSubmit="OnSubmit" class="card card-body bg-light mt-3">
-    <div class="form-group">
-
-        <label for="Customerid">Customer ID</label>
-        <InputNumber @bind-Value="bicycle.Customerid" class="form-control" id="customerid" />
-
-        <label for="modeltype">Model Type</label>
-        <InputText @bind-Value="bicycle.Modeltype" class="form-control" id="modeltype" />
-
-        <label for="Paintid">Paint ID</label>
-        <InputNumber @bind-Value="bicycle.Paintid" class="form-control" id="paintid" />
-
-        <label for="Framesize">Frame Size</label>
-        <InputNumber @bind-Value="bicycle.Framesize" class="form-control" id="framesize" />
-
-        <label for="OrderDate">Order Date</label>
-        <InputDate @bind-Value="bicycle.OrderDate" class="form-constrol" id="orderdate" />
-
-        <label for="StartDate">Start Date</label>
-        <InputDate @bind-Value="bicycle.StartDate" class="form-constrol" id="startdate" />
-
-        <label for="ShipDate">Ship Date</label>
-        <InputDate @bind-Value="bicycle.ShipDate" class="form-constrol" id="shipdate" />
-
-        <label for="shipsmployee">Ship Employee</label>
-        <InputNumber @bind-Value="bicycle.Shipemployee" class="form-control" id="shipemployee" />
-
-        <label for="frameassembler">Frame Assember</label>
-        <InputNumber @bind-Value="bicycle.Frameassembler" class="form-control" id="frameassembler" />
-
-        <label for="Painter">Painter</label>
-        <InputNumber @bind-Value="bicycle.Painter" class="form-control" id="painter" />
-
-        <label for="construction">Construction</label>
-        <InputText @bind-Value="bicycle.Construction" class="form-control" id="construction" />
-
-        <label for="waterbottlebrazeons">Water Bottle Brazeons</label>
-        <InputNumber @bind-Value="bicycle.Waterbottlebrazeons" class="form-control" id="waterbottlebrazeons" />
-
-        <label for="customname">Custom Name</label>
-        <InputText @bind-Value="bicycle.Customname" class="form-control" id="customname" />
-
-        <label for="letterstyleid">Letter Style ID</label>
-        <InputText @bind-Value="bicycle.Letterstyleid" class="form-control" id="letterstyleid" />
-
-        <label for="storeid">Store ID</label>
-        <InputNumber @bind-Value="bicycle.Storeid" class="form-control" id="storeid" />
-
-        <label for="employeeid">Employee ID</label>
-        <InputNumber @bind-Value="bicycle.Employeeid" class="form-control" id="employeeid" />
-
-        <label for="toptube">Top Tube</label>
-        <InputNumber @bind-Value="bicycle.Toptube" class="form-control" id="toptube" />
-
-        <label for="chainstay">Chain Stay</label>
-        <InputNumber @bind-Value="bicycle.Chainstay" class="form-control" id="chainstay" />
-
-        <label for="headtubeangle">Head Tube Angle</label>
-        <InputNumber @bind-Value="bicycle.Headtubeangle" class="form-control" id="headtubeangle" />
-
-        <label for="seattubeangle">Seat Tube Angle</label>
-        <InputNumber @bind-Value="bicycle.Seattubeangle" class="form-control" id="seattubeangle" />
-
-        <label for="listprice">List Price</label>
-        <InputNumber @bind-Value="bicycle.Listprice" class="form-control" id="listprice" />
-
-        <label for="saleprice">Sale Price</label>
-        <InputNumber @bind-Value="bicycle.Saleprice" class="form-control" id="saleprice" />
-
-        <label for="salestax">Sales Tax</label>
-        <InputNumber @bind-Value="bicycle.Salestax" class="form-control" id="salestax" />
-
-        <label for="salestate">Sale State</label>
-        <InputText @bind-Value="bicycle.Salestate" class="form-control" id="salestate" />
-
-        <label for="shipprice">Ship Price</label>
-        <InputNumber @bind-Value="bicycle.Shipprice" class="form-control" id="shipprice" />
-
-        <label for="frameprice">Frame Price</label>
-        <InputNumber @bind-Value="bicycle.Frameprice" class="form-control" id="frameprice" />
-
-        <label for="componentlist">Component List</label>
-        <InputNumber @bind-Value="bicycle.Componentlist" class="form-control" id="componentlist" />
-
-        <div class="row">
-            <div class="col-md-12 text-right">
-                <button type="button" class="btn btn-danger" @onclick="DeleteBicycle">Delete Bicycle</button>
-                <button type="submit" class="btn btn-success">Save Changes</button>
+    <div class="card mb-0">
+            <div class="card-header">
+                Bicycle
             </div>
-        </div>
+
+            <div class="card-body">
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="Customerid">Customer ID</label>
+                        <InputNumber @bind-Value="bicycle.Customerid" class="form-control" id="customerid" />
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="customname">Custom Name</label>
+                        <InputText @bind-Value="bicycle.Customname" class="form-control" id="customname" />
+                    </div>
+                </div>
+
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="modeltype">Model Type</label>
+                        <InputText @bind-Value="bicycle.Modeltype" class="form-control" id="modeltype" />
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="Framesize">Frame Size</label>
+                        <InputNumber @bind-Value="bicycle.Framesize" class="form-control" id="framesize" />
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="construction">Construction</label>
+                        <InputText @bind-Value="bicycle.Construction" class="form-control" id="construction" />
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="waterbottlebrazeons">Water Bottle Brazeons</label>
+                        <InputNumber @bind-Value="bicycle.Waterbottlebrazeons" class="form-control" id="waterbottlebrazeons" />
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="letterstyleid">Letter Style ID</label>
+                        <InputText @bind-Value="bicycle.Letterstyleid" class="form-control" id="letterstyleid" />
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="toptube">Top Tube</label>
+                        <InputNumber @bind-Value="bicycle.Toptube" class="form-control" id="toptube" />
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="chainstay">Chain Stay</label>
+                        <InputNumber @bind-Value="bicycle.Chainstay" class="form-control" id="chainstay" />
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="headtubeangle">Head Tube Angle</label>
+                        <InputNumber @bind-Value="bicycle.Headtubeangle" class="form-control" id="headtubeangle" />
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="seattubeangle">Seat Tube Angle</label>
+                        <InputNumber @bind-Value="bicycle.Seattubeangle" class="form-control" id="seattubeangle" />
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="componentlist">Component List</label>
+                        <InputNumber @bind-Value="bicycle.Componentlist" class="form-control" id="componentlist" />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="Paintid">Paint ID</label>
+                        <InputNumber @bind-Value="bicycle.Paintid" class="form-control" id="paintid" />
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="Painter">Painter</label>
+                        <InputNumber @bind-Value="bicycle.Painter" class="form-control" id="painter" />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="OrderDate">Order Date</label>
+                        <InputDate @bind-Value="bicycle.OrderDate" class="form-constrol" id="orderdate" />
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="StartDate">Start Date</label>
+                        <InputDate @bind-Value="bicycle.StartDate" class="form-constrol" id="startdate" />
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="ShipDate">Ship Date</label>
+                        <InputDate @bind-Value="bicycle.ShipDate" class="form-constrol" id="shipdate" />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="shipsmployee">Ship Employee</label>
+                        <InputNumber @bind-Value="bicycle.Shipemployee" class="form-control" id="shipemployee" />
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="frameassembler">Frame Assember</label>
+                        <InputNumber @bind-Value="bicycle.Frameassembler" class="form-control" id="frameassembler" />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="storeid">Store ID</label>
+                        <InputNumber @bind-Value="bicycle.Storeid" class="form-control" id="storeid" />
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="employeeid">Employee ID</label>
+                        <InputNumber @bind-Value="bicycle.Employeeid" class="form-control" id="employeeid" />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="listprice">List Price</label>
+                        <InputNumber @bind-Value="bicycle.Listprice" class="form-control" id="listprice" />
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="saleprice">Sale Price</label>
+                        <InputNumber @bind-Value="bicycle.Saleprice" class="form-control" id="saleprice" />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="salestax">Sales Tax</label>
+                        <InputNumber @bind-Value="bicycle.Salestax" class="form-control" id="salestax" />
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="salestate">Sale State</label>
+                        <InputText @bind-Value="bicycle.Salestate" class="form-control" id="salestate" />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="shipprice">Ship Price</label>
+                        <InputNumber @bind-Value="bicycle.Shipprice" class="form-control" id="shipprice" />
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="frameprice">Frame Price</label>
+                        <InputNumber @bind-Value="bicycle.Frameprice" class="form-control" id="frameprice" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <button type="button" class="btn btn-danger" @onclick="DeleteBicycle">Delete Bicycle</button>
+                        <button type="submit" class="btn btn-success">Save Changes</button>
+                    </div>
+                </div>
+            </div>
     </div>
 </EditForm>
 }
