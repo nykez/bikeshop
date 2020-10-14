@@ -14,7 +14,7 @@
                 Model Type
                 <a href="" @onclick:preventDefault ><span class="oi oi-plus float-right" aria-hidden="true"></span></a>
             </div>
-            <div class="card-body @collapse_model">
+            <div class="card-body">
                 @foreach(var item in filter_modelTypes) {
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="model-type" id="@item" value="@item" @onchange="eventArgs => { ModelClicked(item, eventArgs.Value); }">
@@ -32,7 +32,7 @@
                 Construction
                 <a href="" @onclick:preventDefault ><span class="oi oi-plus float-right" aria-hidden="true"></span></a>
             </div>
-            <div class="card-body @collapse_construction">
+            <div class="card-body">
                 @foreach(var item in filter_construction) {
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="construction-type" id="item" value="@item" @onchange="eventArgs => { ConstructionClicked(item, eventArgs.Value); }">
@@ -49,7 +49,7 @@
                 Color
                 <a href="" @onclick:preventDefault ><span class="oi oi-plus float-right" aria-hidden="true"></span></a>
             </div>
-            <div class="card-body @collapse_color">
+            <div class="card-bodyr">
                 @foreach(var item in all_Colorlists) {
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="colorlist" id="item" value="@item" @onchange="eventArgs => { ColorlistClicked(item, eventArgs.Value); }">
@@ -66,7 +66,7 @@
                 Pricing
                 <a href="" @onclick:preventDefault ><span class="oi oi-plus float-right" aria-hidden="true"></span></a>
             </div>
-            <div class="card-body @collapse_color">
+            <div class="card-body">
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label>Min</label>
