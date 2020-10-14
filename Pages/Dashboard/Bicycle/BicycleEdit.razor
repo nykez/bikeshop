@@ -1,12 +1,15 @@
-﻿@page "/dashboard/bicycles/create"
-@using System.ComponentModel.DataAnnotations;
-@using frontendapi_bikeshop.Models;
+﻿@page "/bicycles/edit/{id}"
 @using System.Net.Http
 @inject HttpClient HttpLib
-@inject IToastService toasterService;
-<h3>CreateEntryBicycle</h3>
+@inject SweetAlertService Swal;
+@inject NavigationManager navi;
+<h3>BicycleEdit</h3>
 
-<EditForm Model=@bicycle OnSubmit="OnSubmit">
+
+@if(bicycle == null) {
+    <p>Loading Bicycle details...</p>
+} else {
+<EditForm Model=bicycle OnSubmit="OnSubmit" class="card card-body bg-light mt-3">
     <div class="form-group">
 
         <label for="Customerid">Customer ID</label>
@@ -90,23 +93,50 @@
         <label for="componentlist">Component List</label>
         <InputNumber @bind-Value="bicycle.Componentlist" class="form-control" id="componentlist" />
 
-        <input type="submit" class="btn btn-primary" value="Save" />
+        <div class="row">
+            <div class="col-md-12 text-right">
+                <button type="button" class="btn btn-danger" @onclick="DeleteBicycle">Delete Bicycle</button>
+                <button type="submit" class="btn btn-success">Save Changes</button>
+            </div>
+        </div>
     </div>
 </EditForm>
-
+}
 
 @code {
-    Bicycle bicycle = new Bicycle();
+    [Parameter]
+    public String id{ get; set; }
+    public Bicycle bicycle;
+    protected override async Task OnInitializedAsync() {
+        bicycle = await HttpLib.GetFromJsonAsync<Bicycle>($"api/bicycles/{id}");
+    }
     public async Task OnSubmit() {
-        try {
-            var status = await HttpLib.PostAsJsonAsync($"api/bicycles", bicycle);
+        var status = await HttpLib.PutAsJsonAsync<Bicycle>($"api/bicycles/{bicycle.Serialnumber}", bicycle);
+        if(status.IsSuccessStatusCode) {
+            await Swal.FireAsync("Success", "Bicycle has been saved!", "success");
+        } else {
+            await Swal.FireAsync("Error", "Bicycle failed to update.", "error");
+        }
+    }
+    public async Task DeleteBicycle() {
+        SweetAlertResult result = await Swal.FireAsync(new SweetAlertOptions {
+            Title = "",
+            Text = "Are you sure you want to delete this bicycle?",
+            Icon = SweetAlertIcon.Warning,
+            ShowCancelButton = true,
+            ConfirmButtonText = "Yes",
+        });
+
+        if(!string.IsNullOrEmpty(result.Value)) {
+            var status = await HttpLib.DeleteAsync($"api/bicycles/{bicycle.Serialnumber}");
             if(status.IsSuccessStatusCode) {
-                toasterService.ShowSuccess("Bicycle Added.");
-            } else
-                toasterService.ShowError(status.ToString());
-        } catch(Exception ex) {
-            toasterService.ShowError(ex.Message);
+                await Swal.FireAsync("Delete", "Bicycle has been deleted.", SweetAlertIcon.Success);
+                navi.NavigateTo("/dashboard/bicycles");
+            } else {
+                await Swal.FireAsync("Error", "Bicycle could not be deleted.", SweetAlertIcon.Error);
+            }
         }
 
     }
+
 }
