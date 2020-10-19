@@ -124,7 +124,7 @@
             var status = await HttpLib.DeleteAsync($"api/Component/{component.Componentid}");
             if(status.IsSuccessStatusCode) {
                 await Swal.FireAsync("Delete", "Component has been deleted.", SweetAlertIcon.Success);
-                navi.NavigateTo("/dashboard/Component");
+                navi.NavigateTo("/dashboard/parts");
             } else {
                 await Swal.FireAsync("Error", "Component could not be deleted.", SweetAlertIcon.Error);
             }
