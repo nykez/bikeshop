@@ -184,7 +184,7 @@
             var status = await HttpLib.DeleteAsync($"api/bicycles/{bicycle.Serialnumber}");
             if(status.IsSuccessStatusCode) {
                 await Swal.FireAsync("Delete", "Bicycle has been deleted.", SweetAlertIcon.Success);
-                navi.NavigateTo("/dashboard/bicycles");
+                navi.NavigateTo("dashboard/bicycles");
             } else {
                 await Swal.FireAsync("Error", "Bicycle could not be deleted.", SweetAlertIcon.Error);
             }

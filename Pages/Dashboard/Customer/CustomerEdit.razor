@@ -100,7 +100,7 @@ else
             if (status.IsSuccessStatusCode)
             {
                 await Swal.FireAsync("Delete", "Customer has been deleted.", SweetAlertIcon.Success);
-                navi.NavigateTo("/dashboard/customers");
+                navi.NavigateTo("dashboard/customers");
             }
             else
                 await Swal.FireAsync("Error", "Customer could NOT be deleted", SweetAlertIcon.Error);
