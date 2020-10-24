@@ -1,0 +1,24 @@
+﻿@page "/Cart"
+@using System.Diagnostics; 
+@implements IDisposable
+<p>Current Bikes:</p>
+@foreach(Bicycle bike in StateContainer.CartBikes) {
+    <b>@bike.Serialnumber</b>
+}
+
+@code {
+
+    protected override async Task OnAfterRenderAsync(bool firstRender) {
+        if(await localStore.ContainKeyAsync("UserName")) {
+            StateContainer = await localStore.GetItemAsync<StateContainer>("UserName");
+        }
+    }
+
+    protected override void OnInitialized() {
+
+        StateContainer.OnChange += StateHasChanged;
+    }
+    public void Dispose() {
+        StateContainer.OnChange -= StateHasChanged;
+    }
+}

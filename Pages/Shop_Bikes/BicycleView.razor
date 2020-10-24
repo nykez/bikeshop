@@ -2,6 +2,7 @@
 @using System.Net.Http
 @using System.Collections.Generic
 @using System.Diagnostics;
+
 @inject HttpClient HttpLib
 @inject SweetAlertService Swal;
 @inject IJSRuntime JSRuntime;
@@ -12,7 +13,7 @@
         <div class="card mb-1">
             <div class="card-header">
                 Model Type
-                <a href="" @onclick:preventDefault ><span class="oi oi-plus float-right" aria-hidden="true"></span></a>
+                <a href="" @onclick:preventDefault><span class="oi oi-plus float-right" aria-hidden="true"></span></a>
             </div>
             <div class="card-body">
                 @foreach(var item in filter_modelTypes) {
@@ -30,7 +31,7 @@
         <div class="card mb-1">
             <div class="card-header">
                 Construction
-                <a href="" @onclick:preventDefault ><span class="oi oi-plus float-right" aria-hidden="true"></span></a>
+                <a href="" @onclick:preventDefault><span class="oi oi-plus float-right" aria-hidden="true"></span></a>
             </div>
             <div class="card-body">
                 @foreach(var item in filter_construction) {
@@ -47,7 +48,7 @@
         <div class="card mb-1">
             <div class="card-header">
                 Color
-                <a href="" @onclick:preventDefault ><span class="oi oi-plus float-right" aria-hidden="true"></span></a>
+                <a href="" @onclick:preventDefault><span class="oi oi-plus float-right" aria-hidden="true"></span></a>
             </div>
             <div class="card-body">
                 @foreach(var item in all_Colorlists) {
@@ -64,7 +65,7 @@
         <div class="card mb-1">
             <div class="card-header">
                 Pricing
-                <a href="" @onclick:preventDefault ><span class="oi oi-plus float-right" aria-hidden="true"></span></a>
+                <a href="" @onclick:preventDefault><span class="oi oi-plus float-right" aria-hidden="true"></span></a>
             </div>
             <div class="card-body">
                 <div class="form-row">
@@ -100,7 +101,9 @@
                             <h6><span class="badge badge-pill badge-secondary">@bike.Construction</span> <span class="badge badge-pill badge-secondary" style="background-color: @((bike?.Paint?.Colorlist ?? "NONE"))">@((bike?.Paint?.Colorlist ?? "N/A"))</span> <span class="badge badge-pill badge-secondary">@bike.Framesize FRAMESIZE</span></h6>
                             <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
                             <a href="#" class="btn btn-outline-primary">View</a>
-                            <a href="#" class="btn btn-outline-success" @onclick:preventDefault @onclick='(() => Swal.FireAsync("","You must be logged in to do this.", SweetAlertIcon.Warning))'>Add To Cart</a>
+                            <!-- For testing, I had to make it so I can add to the card without logging in -->
+                            <!--<a href="#" class="btn btn-outline-success" @onclick:preventDefault @onclick='(() => Swal.FireAsync("","You must be logged in to do this.", SweetAlertIcon.Warning))'>Add To Cart</a>-->
+                            <a href="#" class="btn btn-outline-success" @onclick:preventDefault @onclick='() => AddBikeToCart(bike)'>Add To Cart</a>
                         </div>
                     </div>
                 }
@@ -121,6 +124,7 @@
                                 <li class="page-item @(bicycles == null || i >= pageNumber && bicycles.Count() < pageSize ? "disabled" : null)"><a class="page-link" href="#/" @onclick="@(async () => await ChoosePage(buttonNumber))" @onclick:preventDefault>@buttonNumber</a></li>
                             }
                         }
+
                         <li class="page-item @(bicycles == null || bicycles.Count() < pageSize ? "disabled" : null)"><a class="page-link" href="#/" @onclick="@(async () => await NextPage())" @onclick:preventDefault>Next</a></li>
                     </ul>
                 </nav>
@@ -146,9 +150,9 @@
     double max;
 
     // a very bad way to collapse things
-    public string collapse_model {get; set;} = "collapse";
-    public string collapse_construction {get; set;} = "collapse";
-    public string collapse_color {get; set;} = "collapse";
+    public string collapse_model { get; set; } = "collapse";
+    public string collapse_construction { get; set; } = "collapse";
+    public string collapse_color { get; set; } = "collapse";
 
     private int pageSize = 20;
     private int pageNumber = 1;
@@ -164,13 +168,12 @@
         }
         if(colorlists.Any()) {
             @*foreach(String colorlist in colorlists) {
-                filter_colorLists.Add(colorlist);
-            }*@
+                    filter_colorLists.Add(colorlist);
+                }*@
         all_Colorlists = new List<String>(colorlists);
     }
+    //StateContainer = await localStore.GetItemAsync<StateContainer>("UserName");
 }
-
-
 
 private async Task<List<String>> GetColorlists() {
     var apiRoute = $"api/paints/list";
@@ -239,6 +242,17 @@ public async Task ClearFilters() {
     bicycles = await Paginate();
 }
 
+public async void AddBikeToCart(Bicycle bicycle) {
+    if(!StateContainer.CartBikes.Contains(bicycle)) {
+        StateContainer.AddBicycle(bicycle);
+        string stateJSON = JsonSerializer.Serialize(StateContainer);
+        await localStore.SetItemAsync<String>("UserName", stateJSON);
+        Debug.WriteLine(StateContainer.CartBikes.Count);
+    } else {
+        await Swal.FireAsync("", "Already in cart!", SweetAlertIcon.Warning);
+    }
+    //Debug.WriteLine(bicycle.Serialnumber);
+}
 
 ///checkbox handlers
 
@@ -301,5 +315,7 @@ String BuildQueryString(List<String> filterList) {
     }
     return qString;
 }
+
+
 
 }
