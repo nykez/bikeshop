@@ -53,7 +53,7 @@ namespace frontendapi_bikeshop.Services
             }
 
             await _loclStorage.SetItemAsync("authToken", loginResult.token);
-            ((ApiAuthenticatedStateProvider)_authStateProvider).MarkUserAsAuthenticated("chiing cong!");
+            ((ApiAuthenticatedStateProvider)_authStateProvider).MarkUserAsAuthenticated(loginModel.Username);
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", loginResult.token);
 
             return loginResult;
