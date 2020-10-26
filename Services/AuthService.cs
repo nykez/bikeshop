@@ -26,7 +26,6 @@ namespace frontendapi_bikeshop.Services
         {
 
             var registerJson = JsonSerializer.Serialize(registerModel);
-            Console.WriteLine(registerJson);
             var response = await _httpClient.PostAsync("api/auth/register", new StringContent(registerJson, Encoding.UTF8, "application/json"));
             var registerResult = JsonSerializer.Deserialize<RegisterResult>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions {PropertyNameCaseInsensitive = true});
 

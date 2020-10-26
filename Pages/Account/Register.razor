@@ -8,10 +8,9 @@
 @if (ShowErrors)
 {
     <div class="alert alert-danger" role="alert">
-        @foreach (var error in Errors)
-        {
-            <p>@error</p>
-        }
+        <p>@Error</p>
+        <p>Password must contain uppercase, number, and non-alphanumerical.</p>
+        <p>Email must be a valid address</p>
     </div>
 }
 
@@ -50,8 +49,7 @@
 
     private RegisterModel RegisterModel = new RegisterModel();
     private bool ShowErrors;
-    private IEnumerable<string> Errors;
-
+    private string Error;
     private async Task HandleRegistration()
     {
         ShowErrors = false;
@@ -64,7 +62,7 @@
         }
         else
         {
-            Errors = result.Errors;
+            Error = "Could not register successfully.";
             ShowErrors = true;
         }
     }

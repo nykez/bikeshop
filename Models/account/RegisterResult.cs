@@ -7,6 +7,6 @@ namespace frontendapi_bikeshop.Models.account
     {
         public bool Successful { get; set; }
 
-        public IEnumerable<string> Errors { get; set; }
+        public string[,] Errors { get; set; }
     }
 }
