@@ -90,6 +90,9 @@ namespace frontendapi_bikeshop
                     claims.Add(new Claim(claim.Key, claim.Value.ToString()));
             }
 
+            foreach(var claim in claims)
+                Console.WriteLine($"{claim.Type} -> {claim.Value}");
+
 
             return claims;
         }
