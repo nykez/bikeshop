@@ -1,3 +1,4 @@
+using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -25,16 +26,26 @@ namespace frontendapi_bikeshop.Services
         {
             var loginasJson = JsonSerializer.Serialize(loginModel);
             var response = await _httpClient.PostAsync("api/auth/login", new StringContent(loginasJson, Encoding.UTF8, "application/json"));
+            Console.WriteLine( await response.Content.ReadAsStringAsync());
             var loginResult = JsonSerializer.Deserialize<LoginResult>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions {PropertyNameCaseInsensitive = true});
-
+            
+            if ( (int) response.StatusCode == 200)
+            {
+                loginResult.Successful = true;
+            }
+            else
+            {
+                loginResult.Successful = false;
+            }
+            
             if (!response.IsSuccessStatusCode)
             {
                 return loginResult;
             }
 
-            await _loclStorage.SetItemAsync("authToken", loginResult.Token);
+            await _loclStorage.SetItemAsync("authToken", loginResult.token);
             ((ApiAuthenticatedStateProvider)_authStateProvider).MarkUserAsAuthenticated(loginModel.Username);
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", loginResult.Token);
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", loginResult.token);
 
             return loginResult;
         }

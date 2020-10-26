@@ -57,7 +57,8 @@
         }
         else
         {
-            Error = result.Error;
+            Console.WriteLine(result.message);
+            Error = result.message;
             ShowErrors = true;
         }
     }
