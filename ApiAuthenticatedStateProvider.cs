@@ -23,20 +23,18 @@ namespace frontendapi_bikeshop
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            // look for JWT
             var savedToken = await _localStorage.GetItemAsync<string>("authToken");
 
-            // user is not logged in / not jwt
             if (string.IsNullOrWhiteSpace(savedToken))
             {
                 return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
             }
 
-            // use our jwt to send up requests
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", savedToken);
 
             return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(savedToken), "jwt")));
         }
+
 
         public void MarkUserAsAuthenticated(string email)
         {
@@ -58,7 +56,7 @@ namespace frontendapi_bikeshop
         private IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
         {
             var claims = new List<Claim>();
-            var payload = jwt.Split(".")[1];
+            var payload = jwt.Split('.')[1];
             var jsonBytes = ParseBase64WithoutPadding(payload);
             var keyValuePairs = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonBytes);
 
@@ -66,30 +64,32 @@ namespace frontendapi_bikeshop
 
             if (roles != null)
             {
-                // multiple roles
                 if (roles.ToString().Trim().StartsWith("["))
                 {
-                    // deserial the roles into string[]
                     var parsedRoles = JsonSerializer.Deserialize<string[]>(roles.ToString());
 
-                    // parse each role claim into the list
-                    foreach(var parsedRole in parsedRoles)
+                    foreach (var parsedRole in parsedRoles)
                     {
                         claims.Add(new Claim(ClaimTypes.Role, parsedRole));
                     }
                 }
                 else
                 {
-                    // just a single role
                     claims.Add(new Claim(ClaimTypes.Role, roles.ToString()));
                 }
+
+                keyValuePairs.Remove(ClaimTypes.Role);
             }
 
-            // add all the 'claims' from the JWT -> username, email,... etc
+            foreach (var item in keyValuePairs)
+            {
+                Console.WriteLine(item.Key);
+                Console.WriteLine(item.Value);
+            }
+
             claims.AddRange(keyValuePairs.Select(kvp => new Claim(kvp.Key, kvp.Value.ToString())));
 
             return claims;
-            
         }
 
         private byte[] ParseBase64WithoutPadding(string base64)

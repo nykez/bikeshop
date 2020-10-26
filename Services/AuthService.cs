@@ -22,11 +22,20 @@ namespace frontendapi_bikeshop.Services
             _httpClient = httpClient;
         }
 
+        public async Task<RegisterResult> Register(RegisterModel registerModel)
+        {
+
+            var registerJson = JsonSerializer.Serialize(registerModel);
+            var response = await _httpClient.PostAsync("api/auth/register", new StringContent(registerJson, Encoding.UTF8, "application/json"));
+            var registerResult = JsonSerializer.Deserialize<RegisterResult>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions {PropertyNameCaseInsensitive = true});
+
+            return registerResult;
+        }
+
         public async Task<LoginResult> Login(LoginModel loginModel)
         {
             var loginasJson = JsonSerializer.Serialize(loginModel);
             var response = await _httpClient.PostAsync("api/auth/login", new StringContent(loginasJson, Encoding.UTF8, "application/json"));
-            Console.WriteLine( await response.Content.ReadAsStringAsync());
             var loginResult = JsonSerializer.Deserialize<LoginResult>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions {PropertyNameCaseInsensitive = true});
             
             if ( (int) response.StatusCode == 200)
@@ -37,27 +46,25 @@ namespace frontendapi_bikeshop.Services
             {
                 loginResult.Successful = false;
             }
-            
+
             if (!response.IsSuccessStatusCode)
             {
                 return loginResult;
             }
 
             await _loclStorage.SetItemAsync("authToken", loginResult.token);
-            ((ApiAuthenticatedStateProvider)_authStateProvider).MarkUserAsAuthenticated(loginModel.Username);
+            ((ApiAuthenticatedStateProvider)_authStateProvider).MarkUserAsAuthenticated("chiing cong!");
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", loginResult.token);
 
             return loginResult;
         }
 
-        public Task Logout()
+        public async Task Logout()
         {
-            throw new System.NotImplementedException();
+            await _loclStorage.RemoveItemAsync("authToken");
+            ((ApiAuthenticatedStateProvider)_authStateProvider).MarkUserLoggedOut();
+            _httpClient.DefaultRequestHeaders.Authorization = null;
         }
 
-        public Task<RegisterResult> Register(RegisterModel registerModel)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }
