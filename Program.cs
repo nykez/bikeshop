@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Blazored.Toast;
 using CurrieTechnologies.Razor.SweetAlert2;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace frontendapi_bikeshop
 {
