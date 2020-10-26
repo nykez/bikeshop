@@ -21,7 +21,7 @@ namespace frontendapi_bikeshop
             _httpClient = httpClient;
         }
 
-        public override async Task<AuthenticationState> GetAuthenticationState()
+        public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
             // look for JWT
             var savedToken = await _localStorage.GetItemAsync<string>("authToken");
