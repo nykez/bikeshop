@@ -62,7 +62,7 @@ namespace frontendapi_bikeshop.Services
             }
 
             await _loclStorage.SetItemAsync("authToken", loginResult.token);
-            ((ApiAuthenticatedStateProvider)_authStateProvider).MarkUserAsAuthenticated(loginModel.Username);
+            ((ApiAuthenticatedStateProvider)_authStateProvider).MarkUserAsAuthenticated(loginResult.token);
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", loginResult.token);
 
             return loginResult;
@@ -71,7 +71,7 @@ namespace frontendapi_bikeshop.Services
         public async Task Logout()
         {
             await _loclStorage.RemoveItemAsync("authToken");
-            ((ApiAuthenticatedStateProvider)_authStateProvider).MarkUserLoggedOut();
+            ((ApiAuthenticatedStateProvider)_authStateProvider).MarkUserAsLoggedOut();
             _httpClient.DefaultRequestHeaders.Authorization = null;
         }
 

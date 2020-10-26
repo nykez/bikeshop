@@ -36,20 +36,17 @@ namespace frontendapi_bikeshop
         }
 
 
-        public void MarkUserAsAuthenticated(string email)
+        public void MarkUserAsAuthenticated(string token)
         {
-            var authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, email) }, "apiauth"));
+            var authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt"));
             var authState = Task.FromResult(new AuthenticationState(authenticatedUser));
             NotifyAuthenticationStateChanged(authState);
         }
 
-        public void MarkUserLoggedOut()
+        public void MarkUserAsLoggedOut()
         {
-            // create a blank identity
             var anonymousUser = new ClaimsPrincipal(new ClaimsIdentity());
-            // pass that to the state => empty state
             var authState = Task.FromResult(new AuthenticationState(anonymousUser));
-            // alert the service we've changed states
             NotifyAuthenticationStateChanged(authState);
         }
 
@@ -81,7 +78,18 @@ namespace frontendapi_bikeshop
                 keyValuePairs.Remove(ClaimTypes.Role);
             }
 
-            claims.AddRange(keyValuePairs.Select(kvp => new Claim(kvp.Key, kvp.Value.ToString())));
+            // setup claims
+            foreach (var claim in keyValuePairs)
+            {
+                if (claim.Key == "unique_name")
+                {
+                    claims.Add(new Claim(ClaimTypes.Name, claim.Value.ToString()));
+                    claims.Add(new Claim(claim.Key, claim.Value.ToString()));
+                }
+                else
+                    claims.Add(new Claim(claim.Key, claim.Value.ToString()));
+            }
+
 
             return claims;
         }
