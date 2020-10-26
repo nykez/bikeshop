@@ -81,12 +81,6 @@ namespace frontendapi_bikeshop
                 keyValuePairs.Remove(ClaimTypes.Role);
             }
 
-            foreach (var item in keyValuePairs)
-            {
-                Console.WriteLine(item.Key);
-                Console.WriteLine(item.Value);
-            }
-
             claims.AddRange(keyValuePairs.Select(kvp => new Claim(kvp.Key, kvp.Value.ToString())));
 
             return claims;
