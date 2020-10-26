@@ -1,4 +1,4 @@
-namespace frontendapi_bikeshop.Models
+namespace frontendapi_bikeshop.Models.account
 {
     public class LoginResult
     {
