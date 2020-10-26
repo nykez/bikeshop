@@ -1,3 +1,70 @@
 @page "/register"
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+@using Models.account
 
 <h1>Register</h1>
+
+@if (ShowErrors)
+{
+    <div class="alert alert-danger" role="alert">
+        <p>@Error</p>
+        <p>Password must contain uppercase, number, and non-alphanumerical.</p>
+        <p>Email must be a valid address</p>
+    </div>
+}
+
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Please enter your details</h5>
+            <EditForm Model="RegisterModel" OnValidSubmit="HandleRegistration">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <InputText Id="username" class="form-control" @bind-Value="RegisterModel.Username" />
+                    <ValidationMessage For="@(() => RegisterModel.Username)" />
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email address</label>
+                    <InputText Id="email" class="form-control" @bind-Value="RegisterModel.Email" />
+                    <ValidationMessage For="@(() => RegisterModel.Email)" />
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <InputText Id="password" type="password" class="form-control" @bind-Value="RegisterModel.Password" />
+                    <ValidationMessage For="@(() => RegisterModel.Password)" />
+                </div>
+                <button type="submit" class="btn btn-primary">Register</button>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    private RegisterModel RegisterModel = new RegisterModel();
+    private bool ShowErrors;
+    private string Error;
+    private async Task HandleRegistration()
+    {
+        ShowErrors = false;
+
+        var result = await AuthService.Register(RegisterModel);
+
+        if (result.Successful)
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+        else
+        {
+            Error = "Could not register successfully.";
+            ShowErrors = true;
+        }
+    }
+
+}
