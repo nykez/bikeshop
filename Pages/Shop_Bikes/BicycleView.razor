@@ -172,8 +172,12 @@
                 }*@
         all_Colorlists = new List<String>(colorlists);
     }
-    //StateContainer = await localStore.GetItemAsync<StateContainer>("UserName");
+    if(await localStore.ContainKeyAsync("UserName")) {
+        var json = await localStore.GetItemAsStringAsync("UserName");
+        UserContainer = JsonConvert.DeserializeObject<StateContainer>(json);
+    }
 }
+
 
 private async Task<List<String>> GetColorlists() {
     var apiRoute = $"api/paints/list";
@@ -243,15 +247,13 @@ public async Task ClearFilters() {
 }
 
 public async void AddBikeToCart(Bicycle bicycle) {
-    if(!StateContainer.CartBikes.Contains(bicycle)) {
-        StateContainer.AddBicycle(bicycle);
-        string stateJSON = JsonSerializer.Serialize(StateContainer);
-        await localStore.SetItemAsync<String>("UserName", stateJSON);
-        Debug.WriteLine(StateContainer.CartBikes.Count);
+    if(!UserContainer.CartBikes.Contains(bicycle)) {
+        UserContainer.AddBicycle(bicycle);
+        await localStore.SetItemAsync<StateContainer>("UserName", UserContainer);
+        await Swal.FireAsync("", "Added to cart!", SweetAlertIcon.Success);
     } else {
         await Swal.FireAsync("", "Already in cart!", SweetAlertIcon.Warning);
     }
-    //Debug.WriteLine(bicycle.Serialnumber);
 }
 
 ///checkbox handlers

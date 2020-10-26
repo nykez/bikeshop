@@ -7,7 +7,7 @@ namespace frontendapi_bikeshop.Models
     {
         public Customer()
         {
-            CartBikes = new HashSet<Bicycle>();
+            CartBikes = new List<Bicycle>();
             //Customertransaction = new HashSet<Customertransaction>();
         }
 
@@ -22,7 +22,7 @@ namespace frontendapi_bikeshop.Models
 
         // public virtual City City { get; set; }
         public virtual ICollection<Bicycle> CartBikes { get; set; }
-        // public virtual ICollection<Customertransaction> Customertransaction { get; set; }
+        //public virtual ICollection<Customertransaction> Customertransaction { get; set; }
 
         public void AddBicycle(Bicycle b) {
             CartBikes.Add(b);

@@ -1,4 +1,6 @@
 ﻿@page "/"
+@using System.Diagnostics;
+
 @inject HttpClient HttpLib
 @inject NavigationManager navigationService
 
@@ -9,3 +11,11 @@
     <button class="btn btn-outline-primary btn-lg" @onclick="@( () => navigationService.NavigateTo("bicycles") )">View Bikes</button>
     <button class="btn btn-outline-success btn-lg" @onclick="@( () => navigationService.NavigateTo("parts") )" role="button">View Parts</button>
 </div>
+@code{
+    protected async override Task OnInitializedAsync() {
+        if(await localStore.ContainKeyAsync("UserName")) {
+            var json = await localStore.GetItemAsStringAsync("UserName");
+            UserContainer = JsonConvert.DeserializeObject<StateContainer>(json);
+        }
+    }
+}

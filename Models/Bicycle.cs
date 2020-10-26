@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 namespace frontendapi_bikeshop.Models
 {
-    public class Bicycle
+    public class Bicycle : IEquatable<Bicycle>
     {
         [Required]
         public int Serialnumber { get; set; }
@@ -59,5 +59,11 @@ namespace frontendapi_bikeshop.Models
         [Required]
         public int? Componentlist { get; set; }
         public Paint Paint { get; set; }
-    }
+
+
+		public bool Equals(Bicycle other) {
+            if(Serialnumber == other.Serialnumber) return true;
+            return false;
+		}
+	}
 }
