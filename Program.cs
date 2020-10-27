@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Blazored.Toast;
+using Blazored.LocalStorage;
 using CurrieTechnologies.Razor.SweetAlert2;
 using Microsoft.AspNetCore.Components.Authorization;
 using Blazored.LocalStorage;
@@ -25,7 +26,8 @@ namespace frontendapi_bikeshop
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddSweetAlert2();
             builder.Services.AddBlazoredToast();
-
+            builder.Services.AddSingleton<StateContainer>();
+            builder.Services.AddBlazoredLocalStorage();
             await builder.Build().RunAsync();
         }
     }

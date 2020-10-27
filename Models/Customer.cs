@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace frontendapi_bikeshop.Models
@@ -6,8 +7,8 @@ namespace frontendapi_bikeshop.Models
     {
         public Customer()
         {
-            // Bicycle = new HashSet<Bicycle>();
-            // Customertransaction = new HashSet<Customertransaction>();
+            CartBikes = new List<Bicycle>();
+            //Customertransaction = new HashSet<Customertransaction>();
         }
 
         public int Customerid { get; set; }
@@ -20,7 +21,11 @@ namespace frontendapi_bikeshop.Models
         public int? Balancedue { get; set; }
 
         // public virtual City City { get; set; }
-        // public virtual ICollection<Bicycle> Bicycle { get; set; }
-        // public virtual ICollection<Customertransaction> Customertransaction { get; set; }
+        public virtual ICollection<Bicycle> CartBikes { get; set; }
+        //public virtual ICollection<Customertransaction> Customertransaction { get; set; }
+
+        public void AddBicycle(Bicycle b) {
+            CartBikes.Add(b);
+		}
     }
 }

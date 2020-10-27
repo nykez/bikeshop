@@ -1,11 +1,26 @@
 ﻿@page "/"
+@using System.Diagnostics;
+
 @inject HttpClient HttpLib
 @inject NavigationManager navigationService
 
 <div class="jumbotron">
-  <h1 class="display-4">Hello, customer!</h1>
-  <p class="text text-dark"><i>We founded this bike-shop in 2015. Providing the highest quality bicycles and parts possible!</i></p>
-  <hr class="my-4">
-  <button class="btn btn-outline-primary btn-lg" @onclick="@( () => navigationService.NavigateTo("bicycles") )">View Bikes</button>
-  <button class="btn btn-outline-success btn-lg" @onclick="@( () => navigationService.NavigateTo("parts") )" role="button">View Parts</button>
+    <h1 class="display-4">Hello, customer!</h1>
+    <p class="text text-dark"><i>We founded this bike-shop in 2015. Providing the highest quality bicycles and parts possible!</i></p>
+    <hr class="my-4">
+    <button class="btn btn-outline-primary btn-lg" @onclick="@( () => navigationService.NavigateTo("bicycles") )">View Bikes</button>
+    <button class="btn btn-outline-success btn-lg" @onclick="@( () => navigationService.NavigateTo("parts") )" role="button">View Parts</button>
 </div>
+@code{
+    [CascadingParameter] private Task<AuthenticationState> authStateTask { get; set; }
+    protected async override Task OnInitializedAsync() {
+        var authState = await authStateTask;
+        var user = authState.User;
+        if(user.Identity.IsAuthenticated) {
+            if(await localStore.ContainKeyAsync(user.Identity.Name)) {
+                var json = await localStore.GetItemAsStringAsync(user.Identity.Name);
+                UserContainer = JsonConvert.DeserializeObject<StateContainer>(json);
+            }
+        }
+    }
+}
