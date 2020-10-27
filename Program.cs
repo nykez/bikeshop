@@ -7,7 +7,6 @@ using Blazored.Toast;
 using Blazored.LocalStorage;
 using CurrieTechnologies.Razor.SweetAlert2;
 using Microsoft.AspNetCore.Components.Authorization;
-using Blazored.LocalStorage;
 using frontendapi_bikeshop.Services;
 
 namespace frontendapi_bikeshop

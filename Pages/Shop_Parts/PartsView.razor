@@ -220,13 +220,13 @@
         if(user.Identity.IsAuthenticated) {
 
 
-            if(!UserContainer.CartComponents.Contains(part)) {
+            //if(!UserContainer.CartComponents.Contains(part)) {
                 UserContainer.AddComponent(part);
                 await localStore.SetItemAsync<StateContainer>(user.Identity.Name, UserContainer);
                 await Swal.FireAsync("", "Added to cart!", SweetAlertIcon.Success);
-            } else {
+@*            } else {
                 await Swal.FireAsync("", "Already in cart!", SweetAlertIcon.Warning);
-            }
+            }*@
         } else {
             await Swal.FireAsync("", "Please log in to add to your cart.", SweetAlertIcon.Error);
         }
