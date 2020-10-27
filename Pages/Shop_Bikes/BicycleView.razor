@@ -99,7 +99,7 @@
                         </div>
                         <div class="card-body">
                             <h6><span class="badge badge-pill badge-secondary">@bike.Construction</span> <span class="badge badge-pill badge-secondary" style="background-color: @((bike?.Paint?.Colorlist ?? "NONE"))">@((bike?.Paint?.Colorlist ?? "N/A"))</span> <span class="badge badge-pill badge-secondary">@bike.Framesize FRAMESIZE</span></h6>
-                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                            <img src="images/Bike.jpeg" style="width:250px;height:150px;" /><br>
                             <a href="#" class="btn btn-outline-primary">View</a>
                             <!-- For testing, I had to make it so I can add to the cart without logging in -->
                             <a href="#" class="btn btn-outline-success" @onclick:preventDefault @onclick='() => AddBikeToCart(bike)'>Add To Cart</a>
@@ -165,6 +165,8 @@
 
         var bicycleList = await HttpLib.GetFromJsonAsync<Bicycle[]>($"api/bicycles?pageNumber={pageNumber}&pageSize={pageSize}");
         var colorlists = await GetColorlists();
+        var authState = await authStateTask;
+        var user = authState.User;
         if(bicycleList.Any()) {
             bicycles = bicycleList;
         }
@@ -174,8 +176,8 @@
                 }*@
         all_Colorlists = new List<String>(colorlists);
     }
-    if(await localStore.ContainKeyAsync("UserName")) {
-        var json = await localStore.GetItemAsStringAsync("UserName");
+    if(await localStore.ContainKeyAsync(user.Identity.Name)) {
+        var json = await localStore.GetItemAsStringAsync(user.Identity.Name);
         UserContainer = JsonConvert.DeserializeObject<StateContainer>(json);
     }
 }
