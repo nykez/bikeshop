@@ -1,35 +1,61 @@
 ﻿@page "/Cart"
 @inject SweetAlertService Swal;
 @implements IDisposable
-<p>Current Bikes:</p>
-<div class="col-9 left card card-body bg-light" style="max-height: 90%">
+<p>Current Cart:</p>
 
-    @if(UserContainer.CartBikes == null) {
-        <p>Loading bicycles...</p>
-    } else {
-        <div class="card-deck">
-            @if(loggedIn) {
+
+@if(loggedIn) {
+    <div class="card-deck bg-light mt-1">
+        @if(UserContainer.CartBikes.Count == 0) {
+            <p>There are no Bicycles in your cart...</p>
+        } else {
+            <div class="card-deck">
                 @foreach(var bike in UserContainer.CartBikes) {
-                    <div class="card m-1" style="min-width: 18rem; max-width:33.0%;">
+                    <div class="card m-1 justify-content-center" style="min-width: 18rem; max-width:33.0%;">
                         <div class="card-header">
                             <h5 class="card-title">@bike.Modeltype<span class="badge badge-pill badge-primary float-right">$@bike.Listprice</span></h5>
                         </div>
                         <div class="card-body">
                             <h6><span class="badge badge-pill badge-secondary">@bike.Construction</span> <span class="badge badge-pill badge-secondary" style="background-color: @((bike?.Paint?.Colorlist ?? "NONE"))">@((bike?.Paint?.Colorlist ?? "N/A"))</span> <span class="badge badge-pill badge-secondary">@bike.Framesize FRAMESIZE</span></h6>
-                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                            <img src="images/Bike.jpeg" style="width:250px;height:150px;"/><br>
                             <a href="#" class="btn btn-outline-primary">View</a>
                             <button type="button" class="btn btn-danger" @onclick="() => DeleteBicycle(bike)">Delete Bicycle</button>
                         </div>
                     </div>
                 }
-            } else {
-                <h5>Please <a href="/login">log in</a> to view your cart!</h5>
-            }
-        </div>
-    }
+            </div>
+        }
+    </div>
+}
 
 
-</div>
+@if(loggedIn) {
+    <div class="card-deck bg-light mt-1">
+        @if(UserContainer.CartComponents.Count == 0) {
+            <p>There are no Parts in your cart....</p>
+        } else {
+            <div class="card-deck">
+                @foreach(var part in UserContainer.CartComponents) {
+                    <div class="card m-1 justify-content-center" style="min-width: 18rem; max-width:33.0%;">
+                        <div class="card-header">
+                            <h5 class="card-title">@part.Productint<span class="badge badge-pill badge-primary float-right">$@part.Listprice</span></h5>
+                        </div>
+                        <div class="card-body">
+                            <h6><span class="badge badge-pill badge-secondary">@part.Category</span> <span class="badge badge-pill badge-secondary">@((part?.Road ?? "N/A"))</span> <span class="badge badge-pill badge-secondary">LENGTH @(part.Length == 0 ? "N/A" : @part.Length.ToString())</span></h6>
+                            <p class="card-text">@part.Description</p>
+                            <img src="images/PartDrawing.png" style="width:250px;height:150px;"/><br>
+                            <a href="#" class="btn btn-outline-primary">View</a>
+                            <button type="button" class="btn btn-danger" @onclick="() => DeleteComponent(part)">Delete Bicycle</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+} else {
+    <h5>Please <a href="/login">log in</a> to view your cart!</h5>
+}
+
 
 @code {
 
@@ -59,9 +85,23 @@
     }
 
     public async void DeleteBicycle(Bicycle bicycle) {
+        var authState = await authStateTask;
+        var user = authState.User;
         if(UserContainer.CartBikes.Contains(bicycle)) {
             UserContainer.RemoveBicycle(bicycle);
-            await localStore.SetItemAsync<StateContainer>("UserName", UserContainer);
+            await localStore.SetItemAsync<StateContainer>(user.Identity.Name, UserContainer);
+            await Swal.FireAsync("", "Removed from cart!", SweetAlertIcon.Success);
+        } else {
+            await Swal.FireAsync("", "Error occurred...", SweetAlertIcon.Error);
+        }
+    }
+
+    public async void DeleteComponent(Component part) {
+        var authState = await authStateTask;
+        var user = authState.User;
+        if(UserContainer.CartComponents.Contains(part)) {
+            UserContainer.RemoveComponent(part);
+            await localStore.SetItemAsync<StateContainer>(user.Identity.Name, UserContainer);
             await Swal.FireAsync("", "Removed from cart!", SweetAlertIcon.Success);
         } else {
             await Swal.FireAsync("", "Error occurred...", SweetAlertIcon.Error);

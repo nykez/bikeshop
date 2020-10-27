@@ -89,8 +89,9 @@
                         <div class="card-body">
                             <h6><span class="badge badge-pill badge-secondary">@part.Category</span> <span class="badge badge-pill badge-secondary">@((part?.Road ?? "N/A"))</span> <span class="badge badge-pill badge-secondary">LENGTH @(part.Length == 0 ? "N/A" : @part.Length.ToString())</span></h6>
                             <p class="card-text">@part.Description</p>
+                            <img src="images/PartDrawing.png" style="width:250px;height:150px;" /><br>
                             <a href="#" class="btn btn-outline-primary">View</a>
-                            <a href="#" class="btn btn-outline-success" @onclick:preventDefault @onclick='(() => Swal.FireAsync("","You must be logged in to do this.", SweetAlertIcon.Warning))'>Add To Cart</a>
+                            <a href="#" class="btn btn-outline-success" @onclick:preventDefault @onclick='() => AddComponentToCart(part)'>Add To Cart</a>
                         </div>
                     </div>
                 }
@@ -136,13 +137,19 @@
     public int pageNumber = 1;
     public List<String> filter_modelTypes = new List<string>() { "Frame", "Headset", "Front deraileur", "Rear deraileur", "Brakes", "Crank", "Handlebar", "Chain"};
     public List<String> filter_construction = new List<string>() { "MTB", "Road" };
+    [CascadingParameter] private Task<AuthenticationState> authStateTask { get; set; }
 
     protected override async Task OnInitializedAsync() {
-
+        var authState = await authStateTask;
+        var user = authState.User;
         var bicycleList = await HttpLib.GetFromJsonAsync<Component[]>($"api/component?pageNumber={pageNumber}&pageSize={pageSize}");
 
         if(bicycleList.Any()) {
             components = bicycleList;
+        }
+        if(await localStore.ContainKeyAsync(user.Identity.Name)) {
+            var json = await localStore.GetItemAsStringAsync(user.Identity.Name);
+            UserContainer = JsonConvert.DeserializeObject<StateContainer>(json);
         }
 
     }
@@ -205,6 +212,25 @@
         components = await Paginate();
     }
 
+    public async void AddComponentToCart(Component part) {
+
+        var authState = await authStateTask;
+        var user = authState.User;
+
+        if(user.Identity.IsAuthenticated) {
+
+
+            if(!UserContainer.CartComponents.Contains(part)) {
+                UserContainer.AddComponent(part);
+                await localStore.SetItemAsync<StateContainer>(user.Identity.Name, UserContainer);
+                await Swal.FireAsync("", "Added to cart!", SweetAlertIcon.Success);
+            } else {
+                await Swal.FireAsync("", "Already in cart!", SweetAlertIcon.Warning);
+            }
+        } else {
+            await Swal.FireAsync("", "Please log in to add to your cart.", SweetAlertIcon.Error);
+        }
+    }
 
     ///checkbox handlers
 
@@ -247,14 +273,14 @@
     }
 
     bool QueryPrices(double min, double max, out String qString) {
-            qString = "";
+        qString = "";
 
-            if(min > max && max != 0) return false;
-            if(min != 0) qString += $"listprice>{min}";
-            if(min != 0 && max != 0) qString += $"&";
-            if(max != 0) qString += $"listprice<{max}";
-            return true;
-        }
-    
+        if(min > max && max != 0) return false;
+        if(min != 0) qString += $"listprice>{min}";
+        if(min != 0 && max != 0) qString += $"&";
+        if(max != 0) qString += $"listprice<{max}";
+        return true;
+    }
+
 
 }
