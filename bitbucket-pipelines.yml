@@ -1,1 +1,9 @@
-# test
+pipelines:
+  default:
+    - step:
+        name: Deploy to Github Pages
+        script:
+          - git remote set-url origin https://nykez:$DEPLOY_KEY@github.com/nykez/bikeshop.git
+          - git add .
+          - git commit -m "Bitbucket sync"
+          - git push origin master
