@@ -6,7 +6,6 @@ namespace frontendapi_bikeshop.Models.account
     public class RegisterResult
     {
         public bool Successful { get; set; }
-
-        public string[,] Errors { get; set; }
+    
     }
 }

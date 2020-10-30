@@ -8,9 +8,16 @@
 @if (ShowErrors)
 {
     <div class="alert alert-danger" role="alert">
-        <p>@Error</p>
-        <p>Password must contain uppercase, number, and non-alphanumerical.</p>
-        <p>Email must be a valid address</p>
+        <ul>
+            <li><p>@Error</p></li>
+            <li>
+                <p>Password must contain uppercase, number, and non-alphanumerical.</p>
+            </li>
+            <li>
+                <p>Email must be a valid address</p>
+            </li>
+        </ul>
+
     </div>
 }
 
