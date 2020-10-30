@@ -6,10 +6,10 @@ pipelines:
         script:
           - apt-get update -y
           - apt-get install -y git
-
+          - git config --global push.default simple
+          - git remote set-url origin https://nykez:$DEPLOY_KEY@github.com/nykez/bikeshop.git
           - git config --global user.name 'BitBucket'
           - git config --global user.email 'cavinsj@etsu.edu'
-          - git remote set-url origin https://nykez:$DEPLOY_KEY@github.com/nykez/bikeshop.git
-          - git add -f .
+          - git add -f -A .
           - git commit -m "Bitbucket sync"
           - git push origin master
