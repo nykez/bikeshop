@@ -8,4 +8,6 @@ pipelines:
     - step:
         name: Deploy to Github Pages
         script:
+          - apt-get update -y
+          - apt-get install -y git
           - git push https://nykez:$DEPLOY_KEY@github.com/nykez/bikeshop.git HEAD
