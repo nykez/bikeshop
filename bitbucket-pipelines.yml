@@ -1,9 +1,12 @@
+image: ubuntu:16.04
 pipelines:
   default:
     - step:
         name: Deploy to Github Pages
         script:
+          - apt-get update -y
+          - apt-get install -y git
           - git remote set-url origin https://nykez:$DEPLOY_KEY@github.com/nykez/bikeshop.git
-          - git add .
+          - git add -f .
           - git commit -m "Bitbucket sync"
           - git push origin master
