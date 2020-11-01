@@ -1,0 +1,23 @@
+﻿@page "/admin"
+@using System.Net.Http
+@inject HttpClient HttpLib
+@inject SweetAlertService Swal;
+@inject NavigationManager navi;
+
+@if (customer == null)
+{
+    <p>Loading current registered users...</p>
+}
+else
+{
+  <div class="container">
+
+  </div>
+}
+
+
+
+@code {
+
+  Customer customer;
+}
