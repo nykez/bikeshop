@@ -92,14 +92,57 @@
             <p>Loading bicycles...</p>
         } else {
             <div class="card-deck">
-                @foreach(var bike in bicycles) {
+                @foreach (var bike in bicycles) {
                     <div class="card m-1" style="min-width: 18rem; max-width:33.0%;">
                         <div class="card-header">
                             <h5 class="card-title">@bike.Modeltype<span class="badge badge-pill badge-primary float-right">$@bike.Listprice</span></h5>
                         </div>
                         <div class="card-body">
                             <h6><span class="badge badge-pill badge-secondary">@bike.Construction</span> <span class="badge badge-pill badge-secondary" style="background-color: @((bike?.Paint?.Colorlist ?? "NONE"))">@((bike?.Paint?.Colorlist ?? "N/A"))</span> <span class="badge badge-pill badge-secondary">@bike.Framesize FRAMESIZE</span></h6>
-                            <img src="images/Bike.jpeg" style="width:250px;height:150px;" /><br>
+                            @if (bike.Paint.Colorlist.Equals("BLUE"))
+                            {
+                                <img src="images/Bicyles/Blue.jpeg" style="width:250px;height:150px;" /><br>
+                            }
+                            else if (bike.Paint.Colorlist.Equals("WHITE"))
+                            {
+                                <img src="images/Bicyles/White.jpg" style="width:250px;height:150px;" /><br>
+                            }
+                            else if (bike.Paint.Colorlist.Equals("GREEN"))
+                            {
+                                <img src="images/Bicyles/Green.jpeg" style="width:250px;height:150px;" /><br>
+                            }
+                            else if (bike.Paint.Colorlist.Equals("BLACK"))
+                            {
+                                <img src="images/Bicyles/Black_Blue.jpg" style="width:250px;height:150px;" /><br>
+                            }
+                            else if (bike.Paint.Colorlist.Equals("RED"))
+                            {
+                                <img src="images/Bicyles/Red.jpg" style="width:250px;height:150px;" /><br>
+                            }
+                            else if (bike.Paint.Colorlist.Equals("PURPLE"))
+                            {
+                                <img src="images/Bicyles/Pink.jpeg" style="width:250px;height:150px;" /><br>
+                            }
+                            else if (bike.Paint.Colorlist.Equals("ORANGE"))
+                            {
+                                <img src="images/Bicyles/Orange.jpg" style="width:250px;height:150px;" /><br>
+                            }
+                            else if (bike.Paint.Colorlist.Equals("YELLOW"))
+                            {
+                                <img src="images/Bicyles/Yellow.jpg" style="width:250px;height:150px;" /><br>
+                            }
+                            else if (bike.Paint.Colorlist.Equals("GREY"))
+                            {
+                                <img src="images/Bicyles/Grey.jpg" style="width:250px;height:150px;" /><br>
+                            }
+                            else if (bike.Paint.Colorlist.Equals("COPPER"))
+                            {
+                                <img src="images/Bicyles/Rust.jpeg" style="width:250px;height:150px;" /><br>
+                            }
+                            else
+                            {
+                                <img src="images/Bike.jpeg" style="width:250px;height:150px;" /><br>
+                            }
                             <a href="#" class="btn btn-outline-primary">View</a>
                             <!-- For testing, I had to make it so I can add to the cart without logging in -->
                             <a href="#" class="btn btn-outline-success" @onclick:preventDefault @onclick='() => AddBikeToCart(bike)'>Add To Cart</a>
