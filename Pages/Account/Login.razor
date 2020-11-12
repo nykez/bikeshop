@@ -68,5 +68,13 @@
             isLoading = false;
             BtnText = "Login";
         }
+        if(await localStore.ContainKeyAsync(loginModel.Username)) {
+            var json = await localStore.GetItemAsStringAsync(loginModel.Username);
+            UserContainer = JsonConvert.DeserializeObject<StateContainer>(json);
+        } else {
+            UserContainer = new StateContainer();
+            await localStore.SetItemAsync<StateContainer>(loginModel.Username, UserContainer);
+        }
+
     }
 }
