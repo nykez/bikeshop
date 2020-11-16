@@ -1,98 +1,151 @@
 ﻿@page "/Cart"
 @inject SweetAlertService Swal;
 @implements IDisposable
-@if(loggedIn) {
-    <p>Current Cart:</p>
-    <div class="card-deck bg-light mt-1">
-        @if(UserContainer.CartBikes.Count == 0) {
-            <p>There are no Bicycles in your cart...</p>
-        } else {
-            <div class="card-deck">
-                @foreach(var bike in UserContainer.CartBikes) {
-                    <div class="card m-1 justify-content-center" style="min-width: 18rem; max-width:33.0%;">
-                        <div class="card-header">
-                            <h5 class="card-title">@bike.Modeltype<span class="badge badge-pill badge-primary float-right">$@bike.Listprice</span></h5>
+<div class="wrapper">
+    @if(loggedIn) {
+        <p>Current Cart:</p>
+        <div class="cart-lists float-left mt-1 justify-content-center" style="min-width:36rem; max-width:54rem;">
+            <div class="card-deck bg-dark mt-1">
+                @if(UserContainer.CartBikes.Count == 0) {
+                    <p>There are no Bicycles in your cart...</p>
+                } else {
+                    @foreach(var bike in UserContainer.CartBikes) {
+                        <div class="card m-1 justify-content-center" style="min-width: 18rem; max-width: 18rem;">
+                            <div class="card-header">
+                                <h5 class="card-title">@bike.Modeltype<span class="badge badge-pill badge-primary float-right">$@bike.Listprice</span></h5>
+                            </div>
+                            <div class="card-body">
+                                <h6><span class="badge badge-pill badge-secondary">@bike.Construction</span> <span class="badge badge-pill badge-secondary" style="background-color: @((bike?.Paint?.Colorlist ?? "NONE"))">@((bike?.Paint?.Colorlist ?? "N/A"))</span> <span class="badge badge-pill badge-secondary">@bike.Framesize FRAMESIZE</span></h6>
+                                @if(bike.Paint.Colorlist.Equals("BLUE")) {
+                                    <img src="images/Bicycles/Blue.jpeg" style="width:250px;height:150px;" /><br>
+                                } else if(bike.Paint.Colorlist.Equals("WHITE")) {
+                                    <img src="images/Bicycles/White.jpg" style="width:250px;height:150px;" /><br>
+                                } else if(bike.Paint.Colorlist.Equals("GREEN")) {
+                                    <img src="images/Bicycles/Green.jpeg" style="width:250px;height:150px;" /><br>
+                                } else if(bike.Paint.Colorlist.Equals("BLACK")) {
+                                    <img src="images/Bicycles/Black_Blue.jpg" style="width:250px;height:150px;" /><br>
+                                } else if(bike.Paint.Colorlist.Equals("RED")) {
+                                    <img src="images/Bicycles/Red.jpg" style="width:250px;height:150px;" /><br>
+                                } else if(bike.Paint.Colorlist.Equals("PURPLE")) {
+                                    <img src="images/Bicycles/Pink.jpeg" style="width:250px;height:150px;" /><br>
+                                } else if(bike.Paint.Colorlist.Equals("ORANGE")) {
+                                    <img src="images/Bicycles/Orange.jpg" style="width:250px;height:150px;" /><br>
+                                } else if(bike.Paint.Colorlist.Equals("YELLOW")) {
+                                    <img src="images/Bicycles/Yellow.jpg" style="width:250px;height:150px;" /><br>
+                                } else if(bike.Paint.Colorlist.Equals("GREY")) {
+                                    <img src="images/Bicycles/Grey.jpg" style="width:250px;height:150px;" /><br>
+                                } else if(bike.Paint.Colorlist.Equals("COPPER")) {
+                                    <img src="images/Bicycles/Rust.jpeg" style="width:250px;height:150px;" /><br>
+                                } else {
+                                    <img src="images/Bike.jpeg" style="width:250px;height:150px;" /><br>
+                                }
+                                <a href="#" class="btn btn-outline-primary">View</a>
+                                <button type="button" class="btn btn-danger" @onclick="() => DeleteBicycle(bike)">Delete Bicycle</button>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <h6><span class="badge badge-pill badge-secondary">@bike.Construction</span> <span class="badge badge-pill badge-secondary" style="background-color: @((bike?.Paint?.Colorlist ?? "NONE"))">@((bike?.Paint?.Colorlist ?? "N/A"))</span> <span class="badge badge-pill badge-secondary">@bike.Framesize FRAMESIZE</span></h6>
-                            @if (bike.Paint.Colorlist.Equals("BLUE"))
-                            {
-                                <img src="images/Bicycles/Blue.jpeg" style="width:250px;height:150px;" /><br>
-                            }
-                            else if (bike.Paint.Colorlist.Equals("WHITE"))
-                            {
-                                <img src="images/Bicycles/White.jpg" style="width:250px;height:150px;" /><br>
-                            }
-                            else if (bike.Paint.Colorlist.Equals("GREEN"))
-                            {
-                                <img src="images/Bicycles/Green.jpeg" style="width:250px;height:150px;" /><br>
-                            }
-                            else if (bike.Paint.Colorlist.Equals("BLACK"))
-                            {
-                                <img src="images/Bicycles/Black_Blue.jpg" style="width:250px;height:150px;" /><br>
-                            }
-                            else if (bike.Paint.Colorlist.Equals("RED"))
-                            {
-                                <img src="images/Bicycles/Red.jpg" style="width:250px;height:150px;" /><br>
-                            }
-                            else if (bike.Paint.Colorlist.Equals("PURPLE"))
-                            {
-                                <img src="images/Bicycles/Pink.jpeg" style="width:250px;height:150px;" /><br>
-                            }
-                            else if (bike.Paint.Colorlist.Equals("ORANGE"))
-                            {
-                                <img src="images/Bicycles/Orange.jpg" style="width:250px;height:150px;" /><br>
-                            }
-                            else if (bike.Paint.Colorlist.Equals("YELLOW"))
-                            {
-                                <img src="images/Bicycles/Yellow.jpg" style="width:250px;height:150px;" /><br>
-                            }
-                            else if (bike.Paint.Colorlist.Equals("GREY"))
-                            {
-                                <img src="images/Bicycles/Grey.jpg" style="width:250px;height:150px;" /><br>
-                            }
-                            else if (bike.Paint.Colorlist.Equals("COPPER"))
-                            {
-                                <img src="images/Bicycles/Rust.jpeg" style="width:250px;height:150px;" /><br>
-                            }
-                            else
-                            {
-                                <img src="images/Bike.jpeg" style="width:250px;height:150px;" /><br>
-                            }
-                            <a href="#" class="btn btn-outline-primary">View</a>
-                            <button type="button" class="btn btn-danger" @onclick="() => DeleteBicycle(bike)">Delete Bicycle</button>
-                        </div>
-                    </div>
+                    }
                 }
             </div>
-        }
-    </div>
-    <div class="card-deck bg-light mt-1">
-        @if(UserContainer.CartComponents.Count == 0) {
-            <p>There are no Parts in your cart....</p>
-        } else {
-            <div class="card-deck">
-                @foreach(var part in UserContainer.CartComponents) {
-                    <div class="card m-1 justify-content-center" style="min-width: 18rem; max-width:33.0%;">
-                        <div class="card-header">
-                            <h5 class="card-title">@part.Productint<span class="badge badge-pill badge-primary float-right">$@part.Listprice</span></h5>
+            <div class="card-deck bg-dark mt-1">
+                @if(UserContainer.CartComponents.Count == 0) {
+                    <p>There are no Parts in your cart....</p>
+                } else {
+                    @foreach(var part in UserContainer.CartComponents) {
+                        <div class="card m-1 justify-content-center" style="min-width: 18rem; max-width: 18rem;">
+                            <div class="card-header">
+                                <h5 class="card-title">@part.Productint<span class="badge badge-pill badge-primary float-right">$@part.Listprice</span></h5>
+                            </div>
+                            <div class="card-body">
+                                <h6><span class="badge badge-pill badge-secondary">@part.Category</span> <span class="badge badge-pill badge-secondary">@((part?.Road ?? "N/A"))</span> <span class="badge badge-pill badge-secondary">LENGTH @(part.Length == 0 ? "N/A" : @part.Length.ToString())</span></h6>
+                                <p class="card-text">@part.Description</p>
+                                <img src="images/PartDrawing.png" style="width:250px;height:150px;" /><br>
+                                <a href="#" class="btn btn-outline-primary">View</a>
+                                <button type="button" class="btn btn-danger" @onclick="() => DeleteComponent(part)">Delete Component</button>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <h6><span class="badge badge-pill badge-secondary">@part.Category</span> <span class="badge badge-pill badge-secondary">@((part?.Road ?? "N/A"))</span> <span class="badge badge-pill badge-secondary">LENGTH @(part.Length == 0 ? "N/A" : @part.Length.ToString())</span></h6>
-                            <p class="card-text">@part.Description</p>
-                            <img src="images/PartDrawing.png" style="width:250px;height:150px;" /><br>
-                            <a href="#" class="btn btn-outline-primary">View</a>
-                            <button type="button" class="btn btn-danger" @onclick="() => DeleteComponent(part)">Delete Bicycle</button>
-                        </div>
-                    </div>
+                    }
                 }
             </div>
-        }
-    </div>
-} else {
-    <h5>Please <a href="login">Log In</a> to view your cart.</h5>
-}
+        </div>
+        <div class="checkout-details bg-dark float-right justify-content-center mt-1 d-flex" style="min-width: 28%; height: auto; text-align:center;">
+            @{ int? cartTotal = 0;}
+            <div class="div-to-align" style="width:98%; height: 90%;">
+                <div class="bg-light mt-1" style="width:100%; text-align:center; height:3%;">
+                    Cart Details:
+                </div>
 
+                <div class="bg-light mt-1" style="height:auto; width:100%;">
+                    <div class="bg-light mt-1" style="width:100%; text-align:center; height:3%;">
+                        Bicycles:
+                    </div>
+                    @{ int? bicycleSum = 0;}
+                    @{ int? bicycleTax = 0;}
+                    @{ int? bicycleTotal = 0;}
+                    @foreach(Bicycle bike in UserContainer.CartBikes) {
+                        bicycleSum += bike.Listprice;
+                        bicycleTax += bike.Salestax;
+                        <div class="bg-white" style="">
+                            <p style=" text-align: left; width:50%; float: left;">@bike.Modeltype:</p>
+                            <p style=" text-align: right; width:50%; float: right;">$@bike.Listprice</p>
+                        </div>
+                    }
+                    @{bicycleTotal = bicycleSum + bicycleTax;}
+                    -----------------------------------------
+                    <div class="bg-white" style="margin:auto;">
+                        <p style=" text-align: left; width:50%; float: left;">Bicycles Tax:</p>
+                        <p style=" text-align: right; width:50%; float: right;">$@bicycleTax</p>
+                    </div>
+                    <div class="bg-white" style="margin:auto;">
+                        <p style=" text-align: left; width:50%; float: left;">Bicycles Cost:</p>
+                        <p style=" text-align: right; width:50%; float: right;">$@bicycleSum</p>
+                    </div>
+                    -----------------------------------------
+                    <div class="bg-white" style="margin:auto;">
+                        <p style=" text-align: left; width:50%; float: left;">Bicycles Total:</p>
+                        <p style=" text-align: right; width:50%; float: right;">$@bicycleTotal</p>
+                    </div>
+                    -----------------------------------------
+                </div>
+
+                <div class="bg-light mt-1" style="height:auto; width:100%;">
+                    <div class="bg-light mt-1" style="width:100%; text-align:center; height:3%;">
+                        Components:
+                    </div>
+                    @{ int? compSum = 0;}
+                    @foreach(Component comp in UserContainer.CartComponents) {
+                        compSum += comp.Listprice;
+                        <div class="bg-white" style="">
+                            <p style=" text-align: left; width:50%; float: left;">@comp.Category:</p>
+                            <p style=" text-align: right; width:50%; float: right;">$@comp.Listprice</p>
+                        </div>
+                    }
+                    @{bicycleTotal = bicycleSum + bicycleTax;
+                        cartTotal = bicycleTotal + compSum;
+                    }
+
+                    -----------------------------------------
+                    <div class="bg-white" style="margin:auto;">
+                        <p style=" text-align: left; width:50%; float: left;">Components Cost:</p>
+                        <p style=" text-align: right; width:50%; float: right;">$@compSum</p>
+                    </div>
+                    -----------------------------------------
+                </div>
+                <div class="bg-light mt-1 mb-1" style="height:auto; width:100%;">
+                    <div class="bg-white" style="margin:auto;">
+                        <p style=" text-align: left; width:50%; float: left;">Cart Total:</p>
+                        <p style=" text-align: right; width:50%; float: right;">$@cartTotal</p>
+                    </div>
+                    -----------------------------------------
+                    <div>
+                        <button type="button" class="btn btn-success mb-1">Checkout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    } else {
+        <h5>Please <a href="login">Log In</a> to view your cart.</h5>
+    }
+</div>
 
 @code {
 
