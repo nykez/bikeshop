@@ -1,5 +1,6 @@
 ﻿@page "/Cart"
 @inject SweetAlertService Swal;
+@inject NavigationManager navigationService;
 @implements IDisposable
 <div class="wrapper">
     @if(loggedIn) {
@@ -68,7 +69,7 @@
             </div>
         </div>
         <div class="checkout-details bg-dark float-right justify-content-center mt-1 d-flex" style="min-width: 28%; height: auto; text-align:center;">
-            @{ int? cartTotal = 0;}
+            @{cartTotal = 0;}
             <div class="div-to-align" style="width:98%; height: 90%;">
                 <div class="bg-light mt-1" style="width:100%; text-align:center; height:3%;">
                     Cart Details:
@@ -78,9 +79,9 @@
                     <div class="bg-light mt-1" style="width:100%; text-align:center; height:3%;">
                         Bicycles:
                     </div>
-                    @{ int? bicycleSum = 0;}
-                    @{ int? bicycleTax = 0;}
-                    @{ int? bicycleTotal = 0;}
+                    @{bicycleSum = 0; }
+                    @{bicycleTax = 0; }
+                    @{bicycleTotal = 0;}
                     @foreach(Bicycle bike in UserContainer.CartBikes) {
                         bicycleSum += bike.Listprice;
                         bicycleTax += bike.Salestax;
@@ -111,7 +112,7 @@
                     <div class="bg-light mt-1" style="width:100%; text-align:center; height:3%;">
                         Components:
                     </div>
-                    @{ int? compSum = 0;}
+                    @{compSum = 0;}
                     @foreach(Component comp in UserContainer.CartComponents) {
                         compSum += comp.Listprice;
                         <div class="bg-white" style="">
@@ -137,7 +138,7 @@
                     </div>
                     -----------------------------------------
                     <div>
-                        <button type="button" class="btn btn-success mb-1">Checkout</button>
+                        <button type="button" class="btn btn-success mb-1" @onclick="() => CheckoutBtn()">Checkout</button>
                     </div>
                 </div>
             </div>
@@ -148,9 +149,12 @@
 </div>
 
 @code {
+    int? bicycleSum = 0;
+    int? bicycleTax = 0;
+    int? bicycleTotal = 0;
+    int? compSum = 0;
+    int? cartTotal = 0;
 
-    private int pageSize = 20;
-    private int pageNumber = 1;
     [CascadingParameter] private Task<AuthenticationState> authStateTask { get; set; }
     bool loggedIn = false;
     protected async override Task OnInitializedAsync() {
@@ -196,5 +200,17 @@
         } else {
             await Swal.FireAsync("", "Error occurred...", SweetAlertIcon.Error);
         }
+    }
+
+    public async void CheckoutBtn() {
+        var authState = await authStateTask;
+        var user = authState.User;
+        cartContainer.BicycleTax = bicycleTax;
+        cartContainer.BicycleTotal = bicycleTotal;
+        cartContainer.BicycleSum = bicycleSum;
+        cartContainer.ComponentTotal = compSum;
+        cartContainer.CartTotal = cartTotal;
+        await localStore.SetItemAsync<CartContainer>(user.Identity.Name + "Cart", cartContainer);
+        navigationService.NavigateTo("Checkout");
     }
 }

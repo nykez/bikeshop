@@ -26,6 +26,7 @@ namespace frontendapi_bikeshop
             builder.Services.AddSweetAlert2();
             builder.Services.AddBlazoredToast();
             builder.Services.AddSingleton<StateContainer>();
+            builder.Services.AddSingleton<CartContainer>();
             builder.Services.AddBlazoredLocalStorage();
             await builder.Build().RunAsync();
         }
