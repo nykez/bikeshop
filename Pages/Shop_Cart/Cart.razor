@@ -6,7 +6,7 @@
     @if(loggedIn) {
         <p>Current Cart:</p>
         <div class="cart-lists float-left mt-1 justify-content-center" style="min-width:36rem; max-width:54rem;">
-            <div class="card-deck bg-dark mt-1">
+            <div class="card-deck bg-light mt-1">
                 @if(UserContainer.CartBikes.Count == 0) {
                     <p>There are no Bicycles in your cart...</p>
                 } else {
@@ -47,7 +47,7 @@
                     }
                 }
             </div>
-            <div class="card-deck bg-dark mt-1">
+            <div class="card-deck bg-light mt-1">
                 @if(UserContainer.CartComponents.Count == 0) {
                     <p>There are no Parts in your cart....</p>
                 } else {
@@ -68,7 +68,7 @@
                 }
             </div>
         </div>
-        <div class="checkout-details bg-dark float-right justify-content-center mt-1 d-flex" style="min-width: 28%; height: auto; text-align:center;">
+        <div class="checkout-details bg-light float-right justify-content-center mt-1 d-flex" style="min-width: 28%; height: auto; text-align:center;">
             @{cartTotal = 0;}
             <div class="div-to-align" style="width:98%; height: 90%;">
                 <div class="bg-light mt-1" style="width:100%; text-align:center; height:3%;">
