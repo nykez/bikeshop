@@ -1,0 +1,35 @@
+﻿@page "/Checkout"
+<h3>Checkout</h3>
+@cartContainer.CartTotal
+@code {
+    [Parameter]
+    public int? cartTotal { get; set; }
+
+
+    [CascadingParameter] private Task<AuthenticationState> authStateTask { get; set; }
+    bool loggedIn = false;
+    protected async override Task OnInitializedAsync() {
+        var authState = await authStateTask;
+        var user = authState.User;
+        if(user.Identity.IsAuthenticated) {
+            loggedIn = true;
+            if(await localStore.ContainKeyAsync(user.Identity.Name+"Cart")) {
+                var json = await localStore.GetItemAsStringAsync(user.Identity.Name+"Cart");
+                cartContainer = JsonConvert.DeserializeObject<CartContainer>(json);
+            }
+            if(await localStore.ContainKeyAsync(user.Identity.Name)) {
+                var json = await localStore.GetItemAsStringAsync(user.Identity.Name);
+                UserContainer = JsonConvert.DeserializeObject<StateContainer>(json);
+            }
+        }
+    }
+
+    protected override void OnInitialized() {
+
+        UserContainer.OnChange += StateHasChanged;
+        this.StateHasChanged();
+    }
+    public void Dispose() {
+        UserContainer.OnChange -= StateHasChanged;
+    }
+}
