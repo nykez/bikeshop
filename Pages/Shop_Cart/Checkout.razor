@@ -1,9 +1,54 @@
 ﻿@page "/Checkout"
+@using System.Net.Http
+@using frontendapi_bikeshop
+@inject HttpClient HttpLib
 <h3>Checkout</h3>
-@cartContainer.CartTotal
+<div class="wrapper bg-light w-75">
+    @foreach(Bicycle bike in UserContainer.CartBikes) {
+        if(colorBool) {
+            <div class="bg-secondary row w-100 p-1">
+                <div>
+                    <p class="col-sm" style="text-align:left; display:inline; padding:15px; width:33%;">@bike.Serialnumber</p>
+                    <p class="col-sm" style="text-align:center; display:inline; padding:15px; width:33%;">@bike.Modeltype</p>
+                    <p class="col-sm" style="text-align:right; display:inline; padding:15px; width:33%;">@bike.Listprice</p>
+                </div>
+            </div>
+        } else {
+            <div class="bg-light rpw w-100 p-1">
+                <div>
+                    <p class="col-sm" style="text-align:left; display:inline; padding:15px; width:33%;">@bike.Serialnumber</p>
+                    <p class="col-sm" style="text-align:center; display:inline; padding:15px; width:33%;">@bike.Modeltype</p>
+                    <p class="col-sm" style="text-align:right; display:inline; padding:15px; width:33%;">@bike.Listprice</p>
+                </div>
+            </div>
+        }
+        colorBool = !colorBool;
+    }
+    @foreach(Component comp in UserContainer.CartComponents) {
+        if(colorBool) {
+            <div class="bg-secondary row w-100 p-1">
+                <div>
+                    <p class="col-sm" style="text-align:left; display:inline; padding:15px; width:33%;">@comp.Componentid</p>
+                    <p class="col-sm" style="text-align:center; display:inline; padding:15px; width:33%;">@comp.Description</p>
+                    <p class="col-sm" style="text-align:right; display:inline; padding:15px; width:33%;">@comp.Listprice</p>
+                </div>
+            </div>
+        } else {
+            <div class="bg-light rpw w-100 p-1">
+                <div>
+                    <p class="col-sm" style="text-align:left; display:inline; padding:15px; width:33%;">@comp.Componentid</p>
+                    <p class="col-sm" style="text-align:center; display:inline; padding:15px; width:33%;">@comp.Description</p>
+                    <p class="col-sm" style="text-align:right; display:inline; padding:15px; width:33%;">@comp.Listprice</p>
+                </div>
+            </div>
+        }
+        colorBool = !colorBool;
+    }
+    @CartContainer.CartTotal
+    <button type="button" class="btn btn-success" @onclick="() => CheckoutCart()">Checkout</button>
+</div>
 @code {
-    [Parameter]
-    public int? cartTotal { get; set; }
+    bool colorBool = true;
 
 
     [CascadingParameter] private Task<AuthenticationState> authStateTask { get; set; }
@@ -13,9 +58,9 @@
         var user = authState.User;
         if(user.Identity.IsAuthenticated) {
             loggedIn = true;
-            if(await localStore.ContainKeyAsync(user.Identity.Name+"Cart")) {
-                var json = await localStore.GetItemAsStringAsync(user.Identity.Name+"Cart");
-                cartContainer = JsonConvert.DeserializeObject<CartContainer>(json);
+            if(await localStore.ContainKeyAsync(user.Identity.Name + "Cart")) {
+                var json = await localStore.GetItemAsStringAsync(user.Identity.Name + "Cart");
+                CartContainer = JsonConvert.DeserializeObject<CartContainer>(json);
             }
             if(await localStore.ContainKeyAsync(user.Identity.Name)) {
                 var json = await localStore.GetItemAsStringAsync(user.Identity.Name);
@@ -31,5 +76,32 @@
     }
     public void Dispose() {
         UserContainer.OnChange -= StateHasChanged;
+    }
+
+    public async void CheckoutCart() {
+        var authState = await authStateTask;
+        var user = authState.User;
+        foreach(Bicycle b in UserContainer.CartBikes) {
+           var status = await HttpLib.DeleteAsync($"api/bicycles/{b.Serialnumber}");
+            @*if(status.IsSuccessStatusCode) {
+                UserContainer.RemoveBicycle(b);
+            } else {
+                // notify invalid purchase here
+            }*@
+
+        }
+        foreach(Component c in UserContainer.CartComponents) {
+
+            var status = await HttpLib.DeleteAsync($"api/Component/{c.Componentid}");
+            @*if(status.IsSuccessStatusCode) {
+                UserContainer.RemoveComponent(c);
+            } else {
+                // notify invalid purchase here
+            }*@
+        }
+        UserContainer = new StateContainer();
+        CartContainer = new CartContainer();
+        await localStore.SetItemAsync<StateContainer>(user.Identity.Name, UserContainer);
+        await localStore.SetItemAsync<CartContainer>(user.Identity.Name + "Cart", CartContainer);
     }
 }
