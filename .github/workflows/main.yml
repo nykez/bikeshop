@@ -1,4 +1,6 @@
 name: Deploy to GitHub Pages
+env:
+    ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
 
 # Run workflow on every push to the master branch
 on:
