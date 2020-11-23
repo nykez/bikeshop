@@ -3,52 +3,148 @@
 @using frontendapi_bikeshop
 @inject HttpClient HttpLib
 <h3>Checkout</h3>
-<div class="wrapper bg-light w-75">
-    @foreach(Bicycle bike in UserContainer.CartBikes) {
-        if(colorBool) {
-            <div class="bg-secondary row w-100 p-1">
-                <div>
-                    <p class="col-sm" style="text-align:left; display:inline; padding:15px; width:33%;">@bike.Serialnumber</p>
-                    <p class="col-sm" style="text-align:center; display:inline; padding:15px; width:33%;">@bike.Modeltype</p>
-                    <p class="col-sm" style="text-align:right; display:inline; padding:15px; width:33%;">@bike.Listprice</p>
-                </div>
+<div class="wrapper bg-light w-100 container-fluid">
+    @if(UserContainer.CartBikes.Count > 0) {
+        <div class="bg-secondary row">
+            <div class="col-md-4 text-center p-1">
+                <span class="align-middle">Bike Serial Number</span>
             </div>
-        } else {
-            <div class="bg-light rpw w-100 p-1">
-                <div>
-                    <p class="col-sm" style="text-align:left; display:inline; padding:15px; width:33%;">@bike.Serialnumber</p>
-                    <p class="col-sm" style="text-align:center; display:inline; padding:15px; width:33%;">@bike.Modeltype</p>
-                    <p class="col-sm" style="text-align:right; display:inline; padding:15px; width:33%;">@bike.Listprice</p>
-                </div>
+            <div class="col-md-4 text-center p-1">
+                <span class="align-middle">Bike Model</span>
             </div>
+            <div class="col-md-4 text-center p-1">
+                <span class="align-middle">Bike Price(inc. tax)</span>
+            </div>
+        </div>
+        colorBool = false;
+        @foreach(Bicycle bike in UserContainer.CartBikes) {
+            int? bikePrice = bike.Listprice + bike.Salestax;
+            if(colorBool) {
+                <div class="bg-secondary row">
+                    <div class="col-md-4 text-center p-1">
+                        <span class="align-middle">@bike.Serialnumber</span>
+                    </div>
+                    <div class="col-md-4 text-center p-1">
+                        <span class="align-middle">@bike.Modeltype</span>
+                    </div>
+                    <div class="col-md-4 text-center p-1">
+                        <span class="align-middle">$@bikePrice</span>
+                    </div>
+                </div>
+            } else {
+                <div class="bg-light row">
+                    <div class="col-md-4 text-center p-1">
+                        <span class="align-middle">@bike.Serialnumber</span>
+                    </div>
+                    <div class="col-md-4 text-center p-1">
+                        <span class="align-middle">@bike.Modeltype</span>
+                    </div>
+                    <div class="col-md-4 text-center p-1">
+                        <span class="align-middle">$@bikePrice</span>
+                    </div>
+                </div>
+            }
+            colorBool = !colorBool;
         }
-        colorBool = !colorBool;
+        <div class="bg-light row border border-primary">
+            <div class="col-md-4 text-center p-1">
+                <span class="align-middle"></span>
+            </div>
+            <div class="col-md-4 text-center p-1">
+                <span class="align-middle">Bike Total: </span>
+            </div>
+            <div class="col-md-4 text-center p-1">
+                <span class="align-middle">$@CartContainer.BicycleTotal</span>
+            </div>
+        </div>
+        <div class="bg-light row">
+            <div class="col-md-4 text-center p-1">
+                <span class="align-middle"></span>
+            </div>
+            <div class="col-md-4 text-center p-1">
+                <span class="align-middle"></span>
+            </div>
+            <div class="col-md-4 text-center p-1">
+                <span class="align-middle"></span>
+            </div>
+        </div>
     }
-    @foreach(Component comp in UserContainer.CartComponents) {
-        if(colorBool) {
-            <div class="bg-secondary row w-100 p-1">
-                <div>
-                    <p class="col-sm" style="text-align:left; display:inline; padding:15px; width:33%;">@comp.Componentid</p>
-                    <p class="col-sm" style="text-align:center; display:inline; padding:15px; width:33%;">@comp.Description</p>
-                    <p class="col-sm" style="text-align:right; display:inline; padding:15px; width:33%;">@comp.Listprice</p>
-                </div>
+    @if(UserContainer.CartComponents.Count > 0) {
+        <div class="bg-secondary row">
+            <div class="col-md-4 text-center p-1">
+                <span class="align-middle">Component Number</span>
             </div>
-        } else {
-            <div class="bg-light rpw w-100 p-1">
-                <div>
-                    <p class="col-sm" style="text-align:left; display:inline; padding:15px; width:33%;">@comp.Componentid</p>
-                    <p class="col-sm" style="text-align:center; display:inline; padding:15px; width:33%;">@comp.Description</p>
-                    <p class="col-sm" style="text-align:right; display:inline; padding:15px; width:33%;">@comp.Listprice</p>
-                </div>
+            <div class="col-md-4 text-center p-1">
+                <span class="align-middle">Component Type</span>
             </div>
+            <div class="col-md-4 text-center p-1">
+                <span class="align-middle">Component Price</span>
+            </div>
+        </div>
+        colorBool = false;
+        @foreach(Component comp in UserContainer.CartComponents) {
+            if(colorBool) {
+                <div class="bg-secondary row">
+                    <div class="col-md-4 text-center p-1">
+                        <span class="align-middle">@comp.Componentid</span>
+                    </div>
+                    <div class="col-md-4 text-center p-1">
+                        <span class="align-middle">@comp.Category</span>
+                    </div>
+                    <div class="col-md-4 text-center p-1">
+                        <span class="align-middle">$@comp.Listprice</span>
+                    </div>
+                </div>
+            } else {
+                <div class="bg-light row">
+                    <div class="col-md-4 text-center p-1">
+                        <span class="align-middle">@comp.Componentid</span>
+                    </div>
+                    <div class="col-md-4 text-center p-1">
+                        <span class="align-middle">@comp.Category</span>
+                    </div>
+                    <div class="col-md-4 text-center p-1">
+                        <span class="align-middle">$@comp.Listprice</span>
+                    </div>
+                </div>
+            }
+            colorBool = !colorBool;
         }
-        colorBool = !colorBool;
+        <div class="bg-light row border border-primary">
+            <div class="col-md-4 text-center p-1">
+                <span class="align-middle"></span>
+            </div>
+            <div class="col-md-4 text-center p-1">
+                <span class="align-middle">Component Total: </span>
+            </div>
+            <div class="col-md-4 text-center p-1">
+                <span class="align-middle">$@CartContainer.ComponentTotal</span>
+            </div>
+        </div>
     }
-    @CartContainer.CartTotal
-    <button type="button" class="btn btn-success" @onclick="() => CheckoutCart()">Checkout</button>
+    <div class="bg-light row border-top border-left border-right border-success">
+        <div class="col-md-4 text-center p-1">
+            <span class="align-middle"></span>
+        </div>
+        <div class="col-md-4 text-center p-1">
+            <span class="align-middle">Cart Total: </span>
+        </div>
+        <div class="col-md-4 text-center p-1">
+            <span class="align-middle">$@CartContainer.CartTotal</span>
+        </div>
+    </div>
+    <div class="bg-light row border-bottom border-left border-right border-success">
+        <div class="col-md-4 p-1">
+        </div>
+        <div class="col-md-4 p-1 text-center">
+            <button type="button" class="btn btn-success" @onclick="() => CheckoutCart()">Checkout</button>
+        </div>
+        <div class="col-md-4 p-1">
+        </div>
+    </div>
 </div>
 @code {
-    bool colorBool = true;
+    bool colorBool = false;
 
 
     [CascadingParameter] private Task<AuthenticationState> authStateTask { get; set; }
@@ -82,22 +178,10 @@
         var authState = await authStateTask;
         var user = authState.User;
         foreach(Bicycle b in UserContainer.CartBikes) {
-           var status = await HttpLib.DeleteAsync($"api/bicycles/{b.Serialnumber}");
-            @*if(status.IsSuccessStatusCode) {
-                UserContainer.RemoveBicycle(b);
-            } else {
-                // notify invalid purchase here
-            }*@
-
+            var status = await HttpLib.DeleteAsync($"api/bicycles/{b.Serialnumber}");
         }
         foreach(Component c in UserContainer.CartComponents) {
-
             var status = await HttpLib.DeleteAsync($"api/Component/{c.Componentid}");
-            @*if(status.IsSuccessStatusCode) {
-                UserContainer.RemoveComponent(c);
-            } else {
-                // notify invalid purchase here
-            }*@
         }
         UserContainer = new StateContainer();
         CartContainer = new CartContainer();
