@@ -2,6 +2,8 @@
 @using System.Net.Http
 @using frontendapi_bikeshop
 @inject HttpClient HttpLib
+@inject SweetAlertService Swal;
+@inject NavigationManager navigationService;
 <h3>Checkout</h3>
 <div class="wrapper bg-light w-100 container-fluid">
     @if(UserContainer.CartBikes.Count > 0) {
@@ -177,15 +179,47 @@
     public async void CheckoutCart() {
         var authState = await authStateTask;
         var user = authState.User;
+        bool purchasecheck = true;
+        List<Bicycle> removeListB = new List<Bicycle>();
+        List<Component> removeListC = new List<Component>();
         foreach(Bicycle b in UserContainer.CartBikes) {
             var status = await HttpLib.DeleteAsync($"api/bicycles/{b.Serialnumber}");
+            if(!status.IsSuccessStatusCode && purchasecheck) {
+                if(purchasecheck)
+                    await Swal.FireAsync($"Items in your cart are no longer available.", "They has been removed from your cart, please reconfirm your purchase.", SweetAlertIcon.Error);
+                purchasecheck = false;
+                removeListB.Add(b);
+            }
         }
         foreach(Component c in UserContainer.CartComponents) {
             var status = await HttpLib.DeleteAsync($"api/Component/{c.Componentid}");
+            if(!status.IsSuccessStatusCode && purchasecheck) {
+                if(purchasecheck)
+                    await Swal.FireAsync($"Items in your cart are no longer available.", "They has been removed from your cart, please reconfirm your purchase.", SweetAlertIcon.Error);
+                purchasecheck = false;
+                removeListC.Add(c);
+            }
+        }
+
+        if(!purchasecheck) {
+            foreach(Bicycle b in removeListB) {
+                CartContainer.BicycleTotal -= (b.Listprice + b.Salestax);
+                CartContainer.CartTotal -= (b.Listprice + b.Salestax);
+                UserContainer.CartBikes.Remove(b);
+            }
+            foreach(Component c in removeListC) {
+                UserContainer.CartComponents.Remove(c);
+                CartContainer.ComponentTotal -= c.Listprice;
+                CartContainer.CartTotal -= c.Listprice;
+            }
+            await localStore.SetItemAsync<StateContainer>(user.Identity.Name, UserContainer);
+            await localStore.SetItemAsync<CartContainer>(user.Identity.Name + "Cart", CartContainer);
+            return;
         }
         UserContainer = new StateContainer();
         CartContainer = new CartContainer();
         await localStore.SetItemAsync<StateContainer>(user.Identity.Name, UserContainer);
         await localStore.SetItemAsync<CartContainer>(user.Identity.Name + "Cart", CartContainer);
+        navigationService.NavigateTo("Confirmation");
     }
 }
