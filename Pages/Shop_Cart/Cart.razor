@@ -205,12 +205,12 @@
     public async void CheckoutBtn() {
         var authState = await authStateTask;
         var user = authState.User;
-        cartContainer.BicycleTax = bicycleTax;
-        cartContainer.BicycleTotal = bicycleTotal;
-        cartContainer.BicycleSum = bicycleSum;
-        cartContainer.ComponentTotal = compSum;
-        cartContainer.CartTotal = cartTotal;
-        await localStore.SetItemAsync<CartContainer>(user.Identity.Name + "Cart", cartContainer);
+        CartContainer.BicycleTax = bicycleTax;
+        CartContainer.BicycleTotal = bicycleTotal;
+        CartContainer.BicycleSum = bicycleSum;
+        CartContainer.ComponentTotal = compSum;
+        CartContainer.CartTotal = cartTotal;
+        await localStore.SetItemAsync<CartContainer>(user.Identity.Name + "Cart", CartContainer);
         navigationService.NavigateTo("Checkout");
     }
 }

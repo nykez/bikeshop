@@ -1,9 +1,152 @@
 ﻿@page "/Checkout"
+@using System.Net.Http
+@using frontendapi_bikeshop
+@inject HttpClient HttpLib
+@inject SweetAlertService Swal;
+@inject NavigationManager navigationService;
 <h3>Checkout</h3>
-@cartContainer.CartTotal
+<div class="wrapper bg-light w-100 container-fluid">
+    @if(UserContainer.CartBikes.Count > 0) {
+        <div class="bg-secondary row">
+            <div class="col-md-4 text-center p-1">
+                <span class="align-middle">Bike Serial Number</span>
+            </div>
+            <div class="col-md-4 text-center p-1">
+                <span class="align-middle">Bike Model</span>
+            </div>
+            <div class="col-md-4 text-center p-1">
+                <span class="align-middle">Bike Price(inc. tax)</span>
+            </div>
+        </div>
+        colorBool = false;
+        @foreach(Bicycle bike in UserContainer.CartBikes) {
+            int? bikePrice = bike.Listprice + bike.Salestax;
+            if(colorBool) {
+                <div class="bg-secondary row">
+                    <div class="col-md-4 text-center p-1">
+                        <span class="align-middle">@bike.Serialnumber</span>
+                    </div>
+                    <div class="col-md-4 text-center p-1">
+                        <span class="align-middle">@bike.Modeltype</span>
+                    </div>
+                    <div class="col-md-4 text-center p-1">
+                        <span class="align-middle">$@bikePrice</span>
+                    </div>
+                </div>
+            } else {
+                <div class="bg-light row">
+                    <div class="col-md-4 text-center p-1">
+                        <span class="align-middle">@bike.Serialnumber</span>
+                    </div>
+                    <div class="col-md-4 text-center p-1">
+                        <span class="align-middle">@bike.Modeltype</span>
+                    </div>
+                    <div class="col-md-4 text-center p-1">
+                        <span class="align-middle">$@bikePrice</span>
+                    </div>
+                </div>
+            }
+            colorBool = !colorBool;
+        }
+        <div class="bg-light row border border-primary">
+            <div class="col-md-4 text-center p-1">
+                <span class="align-middle"></span>
+            </div>
+            <div class="col-md-4 text-center p-1">
+                <span class="align-middle">Bike Total: </span>
+            </div>
+            <div class="col-md-4 text-center p-1">
+                <span class="align-middle">$@CartContainer.BicycleTotal</span>
+            </div>
+        </div>
+        <div class="bg-light row">
+            <div class="col-md-4 text-center p-1">
+                <span class="align-middle"></span>
+            </div>
+            <div class="col-md-4 text-center p-1">
+                <span class="align-middle"></span>
+            </div>
+            <div class="col-md-4 text-center p-1">
+                <span class="align-middle"></span>
+            </div>
+        </div>
+    }
+    @if(UserContainer.CartComponents.Count > 0) {
+        <div class="bg-secondary row">
+            <div class="col-md-4 text-center p-1">
+                <span class="align-middle">Component Number</span>
+            </div>
+            <div class="col-md-4 text-center p-1">
+                <span class="align-middle">Component Type</span>
+            </div>
+            <div class="col-md-4 text-center p-1">
+                <span class="align-middle">Component Price</span>
+            </div>
+        </div>
+        colorBool = false;
+        @foreach(Component comp in UserContainer.CartComponents) {
+            if(colorBool) {
+                <div class="bg-secondary row">
+                    <div class="col-md-4 text-center p-1">
+                        <span class="align-middle">@comp.Componentid</span>
+                    </div>
+                    <div class="col-md-4 text-center p-1">
+                        <span class="align-middle">@comp.Category</span>
+                    </div>
+                    <div class="col-md-4 text-center p-1">
+                        <span class="align-middle">$@comp.Listprice</span>
+                    </div>
+                </div>
+            } else {
+                <div class="bg-light row">
+                    <div class="col-md-4 text-center p-1">
+                        <span class="align-middle">@comp.Componentid</span>
+                    </div>
+                    <div class="col-md-4 text-center p-1">
+                        <span class="align-middle">@comp.Category</span>
+                    </div>
+                    <div class="col-md-4 text-center p-1">
+                        <span class="align-middle">$@comp.Listprice</span>
+                    </div>
+                </div>
+            }
+            colorBool = !colorBool;
+        }
+        <div class="bg-light row border border-primary">
+            <div class="col-md-4 text-center p-1">
+                <span class="align-middle"></span>
+            </div>
+            <div class="col-md-4 text-center p-1">
+                <span class="align-middle">Component Total: </span>
+            </div>
+            <div class="col-md-4 text-center p-1">
+                <span class="align-middle">$@CartContainer.ComponentTotal</span>
+            </div>
+        </div>
+    }
+    <div class="bg-light row border-top border-left border-right border-success">
+        <div class="col-md-4 text-center p-1">
+            <span class="align-middle"></span>
+        </div>
+        <div class="col-md-4 text-center p-1">
+            <span class="align-middle">Cart Total: </span>
+        </div>
+        <div class="col-md-4 text-center p-1">
+            <span class="align-middle">$@CartContainer.CartTotal</span>
+        </div>
+    </div>
+    <div class="bg-light row border-bottom border-left border-right border-success">
+        <div class="col-md-4 p-1">
+        </div>
+        <div class="col-md-4 p-1 text-center">
+            <button type="button" class="btn btn-success" @onclick="() => CheckoutCart()">Checkout</button>
+        </div>
+        <div class="col-md-4 p-1">
+        </div>
+    </div>
+</div>
 @code {
-    [Parameter]
-    public int? cartTotal { get; set; }
+    bool colorBool = false;
 
 
     [CascadingParameter] private Task<AuthenticationState> authStateTask { get; set; }
@@ -13,9 +156,9 @@
         var user = authState.User;
         if(user.Identity.IsAuthenticated) {
             loggedIn = true;
-            if(await localStore.ContainKeyAsync(user.Identity.Name+"Cart")) {
-                var json = await localStore.GetItemAsStringAsync(user.Identity.Name+"Cart");
-                cartContainer = JsonConvert.DeserializeObject<CartContainer>(json);
+            if(await localStore.ContainKeyAsync(user.Identity.Name + "Cart")) {
+                var json = await localStore.GetItemAsStringAsync(user.Identity.Name + "Cart");
+                CartContainer = JsonConvert.DeserializeObject<CartContainer>(json);
             }
             if(await localStore.ContainKeyAsync(user.Identity.Name)) {
                 var json = await localStore.GetItemAsStringAsync(user.Identity.Name);
@@ -31,5 +174,52 @@
     }
     public void Dispose() {
         UserContainer.OnChange -= StateHasChanged;
+    }
+
+    public async void CheckoutCart() {
+        var authState = await authStateTask;
+        var user = authState.User;
+        bool purchasecheck = true;
+        List<Bicycle> removeListB = new List<Bicycle>();
+        List<Component> removeListC = new List<Component>();
+        foreach(Bicycle b in UserContainer.CartBikes) {
+            var status = await HttpLib.DeleteAsync($"api/bicycles/{b.Serialnumber}");
+            if(!status.IsSuccessStatusCode && purchasecheck) {
+                if(purchasecheck)
+                    await Swal.FireAsync($"Items in your cart are no longer available.", "They has been removed from your cart, please reconfirm your purchase.", SweetAlertIcon.Error);
+                purchasecheck = false;
+                removeListB.Add(b);
+            }
+        }
+        foreach(Component c in UserContainer.CartComponents) {
+            var status = await HttpLib.DeleteAsync($"api/Component/{c.Componentid}");
+            if(!status.IsSuccessStatusCode && purchasecheck) {
+                if(purchasecheck)
+                    await Swal.FireAsync($"Items in your cart are no longer available.", "They has been removed from your cart, please reconfirm your purchase.", SweetAlertIcon.Error);
+                purchasecheck = false;
+                removeListC.Add(c);
+            }
+        }
+
+        if(!purchasecheck) {
+            foreach(Bicycle b in removeListB) {
+                CartContainer.BicycleTotal -= (b.Listprice + b.Salestax);
+                CartContainer.CartTotal -= (b.Listprice + b.Salestax);
+                UserContainer.CartBikes.Remove(b);
+            }
+            foreach(Component c in removeListC) {
+                UserContainer.CartComponents.Remove(c);
+                CartContainer.ComponentTotal -= c.Listprice;
+                CartContainer.CartTotal -= c.Listprice;
+            }
+            await localStore.SetItemAsync<StateContainer>(user.Identity.Name, UserContainer);
+            await localStore.SetItemAsync<CartContainer>(user.Identity.Name + "Cart", CartContainer);
+            return;
+        }
+        UserContainer = new StateContainer();
+        CartContainer = new CartContainer();
+        await localStore.SetItemAsync<StateContainer>(user.Identity.Name, UserContainer);
+        await localStore.SetItemAsync<CartContainer>(user.Identity.Name + "Cart", CartContainer);
+        navigationService.NavigateTo("Confirmation");
     }
 }
