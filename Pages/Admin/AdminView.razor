@@ -4,14 +4,17 @@
 @inject SweetAlertService Swal;
 @inject NavigationManager navi;
 
-@if (customer == null)
+@if (userList == null)
 {
     <p>Loading current registered users...</p>
 }
 else
 {
   <div class="container">
-
+    @foreach (var user in userList)
+    {
+        <p>Email: @user.Email Username: @user.UserName Roles: </p>
+    }
   </div>
 }
 
@@ -19,5 +22,17 @@ else
 
 @code {
 
-  Customer customer;
+  UserDTO[] userList;
+
+  
+    protected override async Task OnInitializedAsync() {
+      var user = await HttpLib.GetFromJsonAsync<UserDTO[]>($"api/users/");
+
+      if(user.Any()) {
+        userList = user;
+
+        Console.WriteLine(userList);
+      }
+
+    }
 }
