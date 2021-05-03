@@ -11,10 +11,6 @@
 else
 {
   <div class="container">
-    @foreach (var user in userList)
-    {
-        <p>Email: @user.Email Username: @user.UserName Roles: </p>
-    }
   </div>
 }
 
@@ -30,8 +26,6 @@ else
 
       if(user.Any()) {
         userList = user;
-
-        Console.WriteLine(userList);
       }
 
     }
