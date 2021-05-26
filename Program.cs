@@ -18,7 +18,7 @@ namespace frontendapi_bikeshop
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("app");
 
-            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://se2-database.azurewebsites.net") });
+            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://bikeshop.conduit-studios.com") });
             builder.Services.AddBlazoredLocalStorage();
             builder.Services.AddAuthorizationCore();
             builder.Services.AddScoped<AuthenticationStateProvider, ApiAuthenticatedStateProvider>();
