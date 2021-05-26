@@ -90,8 +90,8 @@
                             <h6><span class="badge badge-pill badge-secondary">@part.Category</span> <span class="badge badge-pill badge-secondary">@((part?.Road ?? "N/A"))</span> <span class="badge badge-pill badge-secondary">LENGTH @(part.Length == 0 ? "N/A" : @part.Length.ToString())</span></h6>
                             <p class="card-text">@part.Description</p>
                             <img src="images/PartDrawing.png" style="width:250px;height:150px;" /><br>
-                            <a href="#" class="btn btn-outline-primary">View</a>
-                            <a href="#" class="btn btn-outline-success" @onclick:preventDefault @onclick='() => AddComponentToCart(part)'>Add To Cart</a>
+                            <a href="#" class="btn btn-outline-primary mt-1">View</a>
+                            <a href="#" class="btn btn-outline-success mt-1" @onclick:preventDefault @onclick='() => AddComponentToCart(part)'>Add To Cart</a>
                         </div>
                     </div>
                 }
